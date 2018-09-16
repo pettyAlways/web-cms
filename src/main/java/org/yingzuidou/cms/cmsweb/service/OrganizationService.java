@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.service;
 
+import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 
@@ -14,12 +15,14 @@ import java.util.Map;
  */
 public interface OrganizationService {
 
-    public List<OrganizationEntity> list(Integer nodeId);
+    public OrganizationDTO list(OrganizationDTO params, PageInfo pageInfo);
 
     public void save(OrganizationEntity organizationEntity);
 
     public void update(OrganizationEntity organizationEntity);
 
     public OrganizationDTO listTree();
+
+    public void save(OrganizationDTO organizationDTO);
 
 }

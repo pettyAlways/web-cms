@@ -1,7 +1,11 @@
 package org.yingzuidou.cms.cmsweb.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
@@ -24,9 +28,16 @@ public class OrganizationServiceImpl implements OrganizationService{
     private OrganizationRepository organizationRepository;
 
     @Override
-    public List<OrganizationEntity> list(Integer nodeId) {
-        nodeId = nodeId == null ? 0 : nodeId;
-        return organizationRepository.findByParentId(nodeId);
+    public OrganizationDTO list(OrganizationDTO params, PageInfo pageInfo) {
+        Optional<OrganizationEntity> curNode = organizationRepository.findById(params.getParentId());
+        Page<OrganizationEntity> orgPage = organizationRepository
+                .findByParentIdAndIsDeleteIs(params.getParentId(), "N",
+                        PageRequest.of(pageInfo.getPage(), pageInfo.getPageSize()));
+        pageInfo.setCounts(orgPage.getTotalPages());
+        params.setId(curNode.get().getId());
+        params.setLabel(curNode.get().getOrgName());
+        params.setChildrenEntityList(orgPage.getContent());
+        return params;
     }
 
     @Override
@@ -53,6 +64,16 @@ public class OrganizationServiceImpl implements OrganizationService{
         parentDTO.setLabel(parent.getOrgName());
         getChildrenList(parentDTO, Optional.ofNullable(flatNode));
         return parentDTO;
+    }
+
+    @Override
+    public void save(OrganizationDTO organizationDTO) {
+        OrganizationEntity organizationEntity = new OrganizationEntity();
+        CmsBeanUtils.copyProperties(organizationDTO, organizationEntity);
+        organizationEntity.setCreator(1);
+        organizationEntity.setCreateTime(new Date());
+        organizationEntity.setIsDelete("N");
+        organizationRepository.save(organizationEntity);
     }
 
     private void getChildrenList(OrganizationDTO parentNode, Optional<List<OrganizationEntity>> allNode) {

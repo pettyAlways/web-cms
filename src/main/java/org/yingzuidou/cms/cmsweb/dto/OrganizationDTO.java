@@ -6,6 +6,9 @@ package org.yingzuidou.cms.cmsweb.dto;
  * @date 2018/9/15
  */
 
+import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
+
 import java.util.List;
 
 /**
@@ -23,10 +26,20 @@ public class OrganizationDTO{
      */
     private String label;
 
+    private String orgName;
+
+    private Integer parentId;
+
+    private String parentName;
+
+    private String expand;
+
     /**
      * 孩子节点
      */
     List<OrganizationDTO> children;
+
+    List<OrganizationEntity> childrenEntityList;
 
     public List<OrganizationDTO> getChildren() {
         return children;
@@ -44,12 +57,52 @@ public class OrganizationDTO{
         this.id = id;
     }
 
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
+
+    public String getExpand() {
+        return expand;
+    }
+
+    public void setExpand(String expand) {
+        this.expand = expand;
+    }
+
+    public List<OrganizationEntity> getChildrenEntityList() {
+        return childrenEntityList;
+    }
+
+    public void setChildrenEntityList(List<OrganizationEntity> childrenEntityList) {
+        this.childrenEntityList = childrenEntityList;
+    }
+
     public String getLabel() {
         return label;
     }
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     @Override

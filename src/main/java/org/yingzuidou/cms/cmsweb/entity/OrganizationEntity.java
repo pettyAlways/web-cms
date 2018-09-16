@@ -29,6 +29,7 @@ public class OrganizationEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
         return id;
     }
@@ -128,10 +129,10 @@ public class OrganizationEntity {
 
         OrganizationEntity that = (OrganizationEntity) o;
 
-        if (id != that.id) {
+        if (id.intValue() != that.id) {
             return false;
         }
-        if (creator != that.creator) {
+        if (creator.intValue() != that.creator) {
             return false;
         }
         if (parentId != null ? !parentId.equals(that.parentId) : that.parentId != null) {

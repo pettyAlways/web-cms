@@ -1,10 +1,11 @@
 package org.yingzuidou.cms.cmsweb.dao;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * 组织机构持久化类
@@ -12,9 +13,9 @@ import java.util.Map;
  * @author yingzuidou
  * @date 2018/9/13     
  */
-public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationEntity, Integer> {
+public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationEntity, Integer>, QuerydslPredicateExecutor<OrganizationEntity> {
 
-    List<OrganizationEntity> findByParentId(Integer parentId);
+    Page<OrganizationEntity> findByParentIdAndIsDeleteIs(Integer parentId, String isDelete, Pageable pageable);
 
     List<OrganizationEntity> findAllByIsDeleteIs(String isDelete);
 }
