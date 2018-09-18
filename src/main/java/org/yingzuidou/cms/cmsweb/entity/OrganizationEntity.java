@@ -1,17 +1,12 @@
 package org.yingzuidou.cms.cmsweb.entity;
-/**
- * OrganizationEntity description goes here
- *
- * @author dell
- * @date 2018/9/13
- */
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * @author dell
+ * 组织实体类
+ *
+ * @author yingzuidou
  * @date 2018/9/13     
  */
 @Entity
@@ -69,7 +64,7 @@ public class OrganizationEntity {
     }
 
     @Basic
-    @Column(name = "creator")
+    @Column(name = "creator", updatable = false)
     public Integer getCreator() {
         return creator;
     }
@@ -79,7 +74,7 @@ public class OrganizationEntity {
     }
 
     @Basic
-    @Column(name = "create_time")
+    @Column(name = "create_time", updatable = false)
     public Date getCreateTime() {
         return createTime;
     }

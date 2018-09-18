@@ -2,9 +2,9 @@ package org.yingzuidou.cms.cmsweb.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.yingzuidou.cms.cmsweb.biz.OrganizationBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
@@ -22,26 +22,31 @@ import java.util.stream.Collectors;
  * @date 2018/9/13     
  */
 @Service
+@Transactional(rollbackFor=Exception.class)
 public class OrganizationServiceImpl implements OrganizationService{
 
     @Autowired
-    private OrganizationRepository organizationRepository;
+    private OrganizationBiz organizationBiz;
+
+    @Autowired
+    public OrganizationRepository organizationRepository;
 
     @Override
-    public OrganizationDTO list(OrganizationDTO params, PageInfo pageInfo) {
-        Optional<OrganizationEntity> curNode = organizationRepository.findById(params.getParentId());
-        Page<OrganizationEntity> orgPage = organizationRepository
-                .findByParentIdAndIsDeleteIs(params.getParentId(), "N",
-                        PageRequest.of(pageInfo.getPage(), pageInfo.getPageSize()));
-        pageInfo.setCounts(orgPage.getTotalPages());
-        params.setId(curNode.get().getId());
-        params.setLabel(curNode.get().getOrgName());
-        params.setChildrenEntityList(orgPage.getContent());
-        return params;
+    public OrganizationDTO list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
+        Optional<OrganizationEntity> curNode = organizationBiz.findOrgById(organizationDTO.getParentId());
+        Page<OrganizationEntity> orgPage = organizationBiz.findAllSubOrganizationWithCondition(organizationDTO, pageInfo.toPageable());
+        organizationDTO.setId(curNode.get().getId());
+        organizationDTO.setLabel(curNode.get().getOrgName());
+        organizationDTO.setChildrenEntityList(orgPage.getContent());
+        pageInfo.setCounts(orgPage.getTotalElements());
+        return organizationDTO;
     }
 
     @Override
     public void save(OrganizationEntity organizationEntity) {
+        organizationEntity.setCreator(1);
+        organizationEntity.setCreateTime(new Date());
+        organizationEntity.setIsDelete("N");
         organizationRepository.save(organizationEntity);
     }
 

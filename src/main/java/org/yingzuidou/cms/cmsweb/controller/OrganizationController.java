@@ -1,10 +1,6 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
-import com.querydsl.core.types.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
@@ -29,10 +25,10 @@ public class OrganizationController {
     private OrganizationService organizationService;
 
     @GetMapping(value="/list.do")
-    public Map list(@QuerydslPredicate(root = OrganizationEntity.class) Predicate predicate, Pageable pageable) {
+    public Map list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
-        // OrganizationDTO result = organizationService.list(params, pageInfo);
-        cMap.success().setData(null);
+        OrganizationDTO result = organizationService.list(organizationDTO, pageInfo);
+        cMap.success().appendData("counts", pageInfo.getCounts()).setResult(result);
         return cMap;
     }
 
@@ -40,7 +36,7 @@ public class OrganizationController {
     public Map listTree(Integer nodeId) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
         OrganizationDTO result = organizationService.listTree();
-        cMap.success().setData(result);
+        cMap.success().setResult(result);
         return cMap;
     }
 

@@ -16,8 +16,13 @@ public class CmsMap<T> extends HashMap{
         return this;
     }
 
-    public void setData(T data) {
+    public void setResult(T data) {
         this.put("datas", data);
+    }
+
+    public <D> CmsMap appendData(String code, D data) {
+        this.put(code, data);
+        return this;
     }
 
     public void error(String code, String message) {

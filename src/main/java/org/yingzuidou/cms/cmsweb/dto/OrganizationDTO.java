@@ -6,13 +6,14 @@ package org.yingzuidou.cms.cmsweb.dto;
  * @date 2018/9/15
  */
 
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 
 import java.util.List;
 
 /**
- * @author dell
+ * 组织类DTO
+ *
+ * @author yingzuidou
  * @date 2018/9/15     
  */
 public class OrganizationDTO{
