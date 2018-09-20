@@ -52,4 +52,16 @@ public class OrganizationBiz {
                 .and(qOrganizationEntity.isDelete.eq("N")).andAnyOf(predicateList.toArray(predicates));
         return organizationRepository.findAll(predicate, pageable);
     }
+
+    public void deleteOrgByIds(Integer[] delIds) {
+        Predicate predicate = qOrganizationEntity.id.in(delIds).and(qOrganizationEntity.isDelete.eq("N"));
+        Iterable<OrganizationEntity> entities = organizationRepository.findAll(predicate);
+        entities.forEach(item -> item.setIsDelete("Y"));
+        organizationRepository.saveAll(entities);
+    }
+
+    public Optional<OrganizationEntity> findById(Integer id) {
+        Predicate predicate = qOrganizationEntity.isDelete.eq("N").and(qOrganizationEntity.id.eq(id));
+        return organizationRepository.findOne(predicate);
+    }
 }

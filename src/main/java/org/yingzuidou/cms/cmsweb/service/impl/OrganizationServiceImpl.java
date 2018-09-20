@@ -81,6 +81,22 @@ public class OrganizationServiceImpl implements OrganizationService{
         organizationRepository.save(organizationEntity);
     }
 
+    @Override
+    public void delete(Integer[] delIds) {
+        organizationBiz.deleteOrgByIds(delIds);
+    }
+
+    @Override
+    public void update(OrganizationDTO organizationDTO) {
+        Optional<OrganizationEntity> optionEntity = organizationBiz.findById(organizationDTO.getId());
+        OrganizationEntity entity = optionEntity.get();
+        CmsBeanUtils.copyMorNULLProperties(organizationDTO, entity);
+        entity.setUpdator(1);
+        entity.setUpdateTime(new Date());
+        organizationRepository.save(entity);
+
+    }
+
     private void getChildrenList(OrganizationDTO parentNode, Optional<List<OrganizationEntity>> allNode) {
         List<OrganizationEntity> allNodeList = allNode.orElse(Collections.EMPTY_LIST);
         List<OrganizationDTO> childrenNodeList = allNodeList.stream()

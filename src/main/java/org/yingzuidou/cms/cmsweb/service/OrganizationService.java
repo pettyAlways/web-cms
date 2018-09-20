@@ -22,4 +22,7 @@ public interface OrganizationService {
 
     void save(OrganizationDTO organizationDTO);
 
+    void delete(Integer[] delIds);
+
+    void update(OrganizationDTO organizationDTO);
 }

@@ -25,26 +25,43 @@ public class OrganizationController {
     private OrganizationService organizationService;
 
     @GetMapping(value="/list.do")
-    public Map list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
+    public CmsMap list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
         OrganizationDTO result = organizationService.list(organizationDTO, pageInfo);
         cMap.success().appendData("counts", pageInfo.getCounts()).setResult(result);
         return cMap;
     }
 
-    @RequestMapping(value="/listTree.do")
-    public Map listTree(Integer nodeId) {
+    @GetMapping(value="/listTree.do")
+    public CmsMap listTree(Integer nodeId) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
         OrganizationDTO result = organizationService.listTree();
         cMap.success().setResult(result);
         return cMap;
     }
 
-    @RequestMapping(value="/save.do")
-    public Map save(@RequestBody OrganizationDTO organizationDTO) {
+    @PostMapping(value="/save.do")
+    public CmsMap save(@RequestBody OrganizationDTO organizationDTO) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
         organizationService.save(organizationDTO);
         cMap.success();
         return cMap;
     }
+
+    @PutMapping(value="/edit.do")
+    public CmsMap edit(@RequestBody OrganizationDTO organizationDTO) {
+        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
+        organizationService.update(organizationDTO);
+        cMap.success();
+        return cMap;
+    }
+
+    @DeleteMapping(value="/delete.do")
+    public CmsMap delete(@RequestBody Integer[] delIds) {
+        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
+        organizationService.delete(delIds);
+        return cMap.success();
+    }
+
+
 }
