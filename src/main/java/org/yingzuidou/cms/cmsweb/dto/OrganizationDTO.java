@@ -9,6 +9,7 @@ package org.yingzuidou.cms.cmsweb.dto;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 组织类DTO
@@ -107,11 +108,37 @@ public class OrganizationDTO{
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrganizationDTO that = (OrganizationDTO) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(label, that.label) &&
+                Objects.equals(orgName, that.orgName) &&
+                Objects.equals(parentId, that.parentId) &&
+                Objects.equals(parentName, that.parentName) &&
+                Objects.equals(expand, that.expand) &&
+                Objects.equals(children, that.children) &&
+                Objects.equals(childrenEntityList, that.childrenEntityList);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, label, orgName, parentId, parentName, expand, children, childrenEntityList);
+    }
+
+    @Override
     public String toString() {
         return "OrganizationDTO{" +
                 "id=" + id +
                 ", label='" + label + '\'' +
+                ", orgName='" + orgName + '\'' +
+                ", parentId=" + parentId +
+                ", parentName='" + parentName + '\'' +
+                ", expand='" + expand + '\'' +
                 ", children=" + children +
+                ", childrenEntityList=" + childrenEntityList +
                 '}';
     }
 }

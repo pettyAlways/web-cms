@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @author yingzuidou
  * @date 2018/9/13     
  */
-public class CmsMap<T> extends HashMap{
+public class CmsMap<T> extends HashMap<String, Object>{
 
     public CmsMap success() {
         this.put("code", 200);
@@ -17,7 +17,7 @@ public class CmsMap<T> extends HashMap{
     }
 
     public void setResult(T data) {
-        this.put("datas", data);
+        this.put("data", data);
     }
 
     public <D> CmsMap appendData(String code, D data) {

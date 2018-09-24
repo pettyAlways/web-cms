@@ -5,10 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
+import org.yingzuidou.cms.cmsweb.dto.UserDTO;
+import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
-
-import java.util.Map;
+import org.yingzuidou.cms.cmsweb.service.UserService;
 
 /**
  * OrganizationController 组织机构
@@ -18,48 +19,41 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping(value="/organization")
-public class OrganizationController {
+@RequestMapping(value="/user")
+public class UserController {
 
     @Autowired
-    private OrganizationService organizationService;
+    private UserService userService;
 
     @GetMapping(value="/list.do")
-    public CmsMap<OrganizationDTO> list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
-        CmsMap<OrganizationDTO> cMap = new CmsMap<>();
-        OrganizationDTO result = organizationService.list(organizationDTO, pageInfo);
+    public CmsMap<UserDTO> list(UserDTO userDTO, PageInfo pageInfo) {
+        CmsMap<UserDTO> cMap = new CmsMap<>();
+        UserDTO result = userService.list(userDTO, pageInfo);
         cMap.success().appendData("counts", pageInfo.getCounts()).setResult(result);
         return cMap;
     }
 
-    @GetMapping(value="/listTree.do")
-    public CmsMap listTree(Integer nodeId) {
-        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
-        OrganizationDTO result = organizationService.listTree();
-        cMap.success().setResult(result);
-        return cMap;
-    }
 
     @PostMapping(value="/save.do")
-    public CmsMap save(@RequestBody OrganizationDTO organizationDTO) {
+    public CmsMap save(@RequestBody CmsUserEntity cmsUserEntity) {
         CmsMap<OrganizationEntity> cMap = new CmsMap<>();
-        organizationService.save(organizationDTO);
+        userService.save(cmsUserEntity);
         cMap.success();
         return cMap;
     }
 
     @PutMapping(value="/edit.do")
-    public CmsMap edit(@RequestBody OrganizationDTO organizationDTO) {
-        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
-        organizationService.update(organizationDTO);
+    public CmsMap edit(@RequestBody CmsUserEntity cmsUserEntity) {
+        CmsMap cMap = new CmsMap<>();
+        userService.update(cmsUserEntity);
         cMap.success();
         return cMap;
     }
 
     @DeleteMapping(value="/delete.do")
     public CmsMap delete(@RequestBody Integer[] delIds) {
-        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
-        organizationService.delete(delIds);
+        CmsMap<UserDTO> cMap = new CmsMap<>();
+        userService.delete(delIds);
         return cMap.success();
     }
 
