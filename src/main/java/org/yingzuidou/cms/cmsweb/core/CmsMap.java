@@ -10,7 +10,7 @@ import java.util.HashMap;
  */
 public class CmsMap<T> extends HashMap<String, Object>{
 
-    public CmsMap success() {
+    public CmsMap<T> success() {
         this.put("code", 200);
         this.put("flag", true);
         return this;
@@ -20,7 +20,7 @@ public class CmsMap<T> extends HashMap<String, Object>{
         this.put("data", data);
     }
 
-    public <D> CmsMap appendData(String code, D data) {
+    public <D> CmsMap<T> appendData(String code, D data) {
         this.put(code, data);
         return this;
     }

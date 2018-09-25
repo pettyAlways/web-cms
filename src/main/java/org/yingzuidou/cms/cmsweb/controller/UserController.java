@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
-import org.yingzuidou.cms.cmsweb.service.OrganizationService;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 
 /**
@@ -22,8 +20,12 @@ import org.yingzuidou.cms.cmsweb.service.UserService;
 @RequestMapping(value="/user")
 public class UserController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value="/list.do")
     public CmsMap<UserDTO> list(UserDTO userDTO, PageInfo pageInfo) {

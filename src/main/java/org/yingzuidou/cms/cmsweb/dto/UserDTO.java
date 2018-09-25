@@ -3,6 +3,7 @@ package org.yingzuidou.cms.cmsweb.dto;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * UserDTO
@@ -75,5 +76,34 @@ public class UserDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return Objects.equals(id, userDTO.id) &&
+                Objects.equals(userName, userDTO.userName) &&
+                Objects.equals(userAccount, userDTO.userAccount) &&
+                Objects.equals(userDepart, userDTO.userDepart) &&
+                Objects.equals(users, userDTO.users);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, userName, userAccount, userDepart, users);
+    }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", userAccount='" + userAccount + '\'' +
+                ", userDepart=" + userDepart +
+                ", users=" + users +
+                '}';
     }
 }

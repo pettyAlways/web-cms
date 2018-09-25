@@ -25,10 +25,14 @@ import java.util.Optional;
 @Service
 public class OrganizationBiz {
 
-    @Autowired
-    public OrganizationRepository organizationRepository;
+    private final OrganizationRepository organizationRepository;
 
     private QOrganizationEntity qOrganizationEntity = QOrganizationEntity.organizationEntity;
+
+    @Autowired
+    public OrganizationBiz(OrganizationRepository organizationRepository) {
+        this.organizationRepository = organizationRepository;
+    }
 
     /**
      * 根据传入orgId查询未删除的实体类
@@ -38,8 +42,7 @@ public class OrganizationBiz {
      */
     public Optional<OrganizationEntity> findOrgById(Integer orgId) {
         Predicate predicate = qOrganizationEntity.isDelete.eq("N").and(qOrganizationEntity.id.eq(orgId));
-        Optional<OrganizationEntity> orgEntity = organizationRepository.findOne(predicate);
-        return orgEntity;
+        return organizationRepository.findOne(predicate);
     }
 
     public Page<OrganizationEntity> findAllSubOrganizationWithCondition(OrganizationDTO organizationDTO, Pageable pageable) {

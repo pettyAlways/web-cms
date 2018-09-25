@@ -25,11 +25,15 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor=Exception.class)
 public class OrganizationServiceImpl implements OrganizationService{
 
-    @Autowired
-    private OrganizationBiz organizationBiz;
+    private final OrganizationBiz organizationBiz;
+
+    private final OrganizationRepository organizationRepository;
 
     @Autowired
-    public OrganizationRepository organizationRepository;
+    public OrganizationServiceImpl(OrganizationBiz organizationBiz, OrganizationRepository organizationRepository) {
+        this.organizationBiz = organizationBiz;
+        this.organizationRepository = organizationRepository;
+    }
 
     @Override
     public OrganizationDTO list(OrganizationDTO organizationDTO, PageInfo pageInfo) {

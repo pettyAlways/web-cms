@@ -8,8 +8,6 @@ import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
 
-import java.util.Map;
-
 /**
  * OrganizationController 组织机构
  *
@@ -21,8 +19,12 @@ import java.util.Map;
 @RequestMapping(value="/organization")
 public class OrganizationController {
 
+    private final OrganizationService organizationService;
+
     @Autowired
-    private OrganizationService organizationService;
+    public OrganizationController(OrganizationService organizationService) {
+        this.organizationService = organizationService;
+    }
 
     @GetMapping(value="/list.do")
     public CmsMap<OrganizationDTO> list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
@@ -33,8 +35,8 @@ public class OrganizationController {
     }
 
     @GetMapping(value="/listTree.do")
-    public CmsMap listTree(Integer nodeId) {
-        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
+    public CmsMap listTree() {
+        CmsMap<OrganizationDTO> cMap = new CmsMap<>();
         OrganizationDTO result = organizationService.listTree();
         cMap.success().setResult(result);
         return cMap;
