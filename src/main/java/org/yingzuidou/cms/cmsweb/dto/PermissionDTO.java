@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 
 import java.util.List;
@@ -28,6 +29,11 @@ public class PermissionDTO {
      */
     private List<ResourceEntity> resources;
 
+    /**
+     * 资源树
+     */
+    private Node tree;
+
     public Integer getParentId() {
         return parentId;
     }
@@ -50,6 +56,14 @@ public class PermissionDTO {
 
     public void setResources(List<ResourceEntity> resources) {
         this.resources = resources;
+    }
+
+    public Node getTree() {
+        return tree;
+    }
+
+    public void setTree(Node tree) {
+        this.tree = tree;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.yingzuidou.cms.cmsweb.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -22,9 +23,9 @@ public class ResourceEntity {
     private String resourceIcon;
     private Integer resourceSort;
     private int creator;
-    private Timestamp createTime;
+    private Date createTime;
     private Integer updator;
-    private Timestamp updateTime;
+    private Date updateTime;
     private String isDelete;
 
     @Id
@@ -120,11 +121,11 @@ public class ResourceEntity {
 
     @Basic
     @Column(name = "create_time")
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -140,11 +141,11 @@ public class ResourceEntity {
 
     @Basic
     @Column(name = "update_time")
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 

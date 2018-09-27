@@ -1,15 +1,15 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
+import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
+
+import java.util.List;
 
 /**
  * PermissionController
@@ -30,9 +30,9 @@ public class PermissionController {
 
     @GetMapping(value="/listPower.do")
     public CmsMap listPower() {
-        CmsMap<PermissionDTO> cMap = new CmsMap<>();
+        CmsMap<Node> cMap = new CmsMap<>();
         PermissionDTO result = permissionService.listPower();
-        cMap.success().setResult(result);
+        cMap.success().setResult(result.getTree());
         return cMap;
     }
 
@@ -45,18 +45,39 @@ public class PermissionController {
      */
     @GetMapping(value="/subPower.do")
     public CmsMap subPower(PermissionDTO permissionDTO, PageInfo pageInfo) {
-        CmsMap<PermissionDTO> cMap = new CmsMap<>();
+        CmsMap<List<ResourceEntity>> cMap = new CmsMap<>();
         PermissionDTO result = permissionService.subPower(permissionDTO, pageInfo);
-        cMap.success().setResult(result);
+        cMap.success().appendData("total", pageInfo.getCounts()).setResult(result.getResources());
         return cMap;
     }
 
+    /**
+     * 删除指定的资源
+     *
+     * @param ids 待删除的资源ID
+     * @return 删除结果
+     */
     @DeleteMapping(value="/deletePower.do")
     public CmsMap deletePower(String ids) {
         CmsMap<PermissionDTO> cMap = new CmsMap<>();
-        PermissionDTO result = permissionService.deletePower(ids);
-        cMap.success().setResult(result);
+         permissionService.deletePower(ids);
+        cMap.success();
         return cMap;
     }
 
+    @PutMapping(value="/updatePower.do")
+    public CmsMap updatePower(@RequestBody ResourceEntity entity) {
+        CmsMap<PermissionDTO> cMap = new CmsMap<>();
+        permissionService.updateResouce(entity);
+        cMap.success();
+        return cMap;
+    }
+
+    @PostMapping(value="/savePower.do")
+    public CmsMap savePower(@RequestBody ResourceEntity entity) {
+        CmsMap<PermissionDTO> cMap = new CmsMap<>();
+        permissionService.saveResource(entity);
+        cMap.success();
+        return cMap;
+    }
 }

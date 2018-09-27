@@ -2,6 +2,7 @@ package org.yingzuidou.cms.cmsweb.service;
 
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
+import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 
 /**
  * PermissionService
@@ -15,5 +16,9 @@ public interface PermissionService {
 
     PermissionDTO subPower(PermissionDTO permissionDTO, PageInfo pageInfo);
 
-    PermissionDTO deletePower(String ids);
+    void deletePower(String ids);
+
+    void updateResouce(ResourceEntity entity);
+
+    void saveResource(ResourceEntity entity);
 }
