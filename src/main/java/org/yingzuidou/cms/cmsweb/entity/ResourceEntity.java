@@ -27,6 +27,15 @@ public class ResourceEntity {
     private Integer updator;
     private Date updateTime;
     private String isDelete;
+    private String alias;
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
+    }
 
     @Id
     @Column(name = "id")
@@ -157,6 +166,16 @@ public class ResourceEntity {
 
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
+    }
+
+    @Basic
+    @Column(name = "alias")
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     @Override

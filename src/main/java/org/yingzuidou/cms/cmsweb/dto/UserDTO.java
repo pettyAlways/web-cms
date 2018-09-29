@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import java.util.List;
@@ -36,7 +37,12 @@ public class UserDTO {
     /**
      * 用户列表
      */
-    List<CmsUserEntity> users;
+    private List<CmsUserEntity> users;
+
+    /**
+     * 资源树
+     */
+    private Node resourceTree;
 
     public List<CmsUserEntity> getUsers() {
         return users;
@@ -76,6 +82,14 @@ public class UserDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Node getResourceTree() {
+            return resourceTree;
+    }
+
+    public void setResourceTree(Node resourceTree) {
+        this.resourceTree = resourceTree;
     }
 
     @Override

@@ -18,4 +18,6 @@ public interface UserService {
     void update(CmsUserEntity userEntity);
 
     void delete(Integer[] delIds);
+
+    UserDTO userInfo();
 }

@@ -38,26 +38,31 @@ public class UserController {
 
     @PostMapping(value="/save.do")
     public CmsMap save(@RequestBody CmsUserEntity cmsUserEntity) {
-        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
         userService.save(cmsUserEntity);
-        cMap.success();
-        return cMap;
+        return CmsMap.ok();
     }
 
     @PutMapping(value="/edit.do")
     public CmsMap edit(@RequestBody CmsUserEntity cmsUserEntity) {
-        CmsMap cMap = new CmsMap<>();
         userService.update(cmsUserEntity);
-        cMap.success();
-        return cMap;
+        return CmsMap.ok();
     }
 
     @DeleteMapping(value="/delete.do")
     public CmsMap delete(@RequestBody Integer[] delIds) {
-        CmsMap<UserDTO> cMap = new CmsMap<>();
         userService.delete(delIds);
-        return cMap.success();
+        return CmsMap.ok();
     }
 
+    @GetMapping("/userInfo.do")
+    public CmsMap<UserDTO> userInfo() {
+        CmsMap<UserDTO> cmsMap = new CmsMap<>();
+        UserDTO userDTO = userService.userInfo();
+        return cmsMap.success().setResult(userDTO);
+    }
 
+    @PostMapping("/login.do")
+    public CmsMap login () {
+        return CmsMap.ok().appendData("token",  "12333");
+    }
 }

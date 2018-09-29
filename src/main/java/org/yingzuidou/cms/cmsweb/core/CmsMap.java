@@ -16,8 +16,9 @@ public class CmsMap<T> extends HashMap<String, Object>{
         return this;
     }
 
-    public void setResult(T data) {
+    public CmsMap<T> setResult(T data) {
         this.put("data", data);
+        return this;
     }
 
     public <D> CmsMap<T> appendData(String code, D data) {
@@ -29,5 +30,11 @@ public class CmsMap<T> extends HashMap<String, Object>{
         this.put("code", code);
         this.put("message", message);
         this.put("flag", false);
+    }
+
+    public static <T> CmsMap ok() {
+        CmsMap<T> cmsMap = new CmsMap<>();
+        cmsMap.success();
+        return cmsMap;
     }
 }

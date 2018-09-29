@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
+import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.cms.cmsweb.service.PermissionService;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
 
@@ -23,11 +25,18 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserBiz userBiz;
+    private final UserBiz userBiz;
+
+    private final UserRepository userRepository;
+
+    private final PermissionService permissionService;
 
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImpl(UserBiz userBiz, UserRepository userRepository, PermissionService permissionService) {
+        this.userBiz = userBiz;
+        this.userRepository = userRepository;
+        this.permissionService = permissionService;
+    }
 
     @Override
     public UserDTO list(UserDTO userDTO, PageInfo pageInfo) {
@@ -58,5 +67,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer[] delIds) {
         userBiz.deleteUserByIds(delIds);
+    }
+
+    @Override
+    public UserDTO userInfo() {
+        UserDTO userDTO = new UserDTO();
+        PermissionDTO permissionDTO = permissionService.listPower();
+        userDTO.setResourceTree(permissionDTO.getTree());
+        return userDTO;
     }
 }
