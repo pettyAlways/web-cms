@@ -57,7 +57,9 @@ public class PermissionServiceImpl implements PermissionService {
                     child.setIcon(node.getResourceIcon());
                     child.setType(node.getResourceType());
                     child.setSort(node.getResourceSort());
+                    child.setPath(node.getResourcePath());
                     child.setAlias(node.getAlias());
+                    child.setDefaultPage(node.getDefaultPage());
                     return child;
                 })
                 .collect(Collectors.toList());

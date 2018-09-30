@@ -21,6 +21,11 @@ public class Node {
     private String name;
 
     /**
+     * 资源地址
+     */
+    private String path;
+
+    /**
      * 资源类型
      */
     private String type;
@@ -36,6 +41,8 @@ public class Node {
     private String alias;
 
     private Integer sort;
+
+    private String defaultPage;
 
     /**
      * 资源子集
@@ -96,6 +103,22 @@ public class Node {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getDefaultPage() {
+        return defaultPage;
+    }
+
+    public void setDefaultPage(String defaultPage) {
+        this.defaultPage = defaultPage;
     }
 
     @Override

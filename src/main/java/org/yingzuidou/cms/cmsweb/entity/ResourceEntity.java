@@ -1,6 +1,7 @@
 package org.yingzuidou.cms.cmsweb.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "resource", schema = "my-cms", catalog = "")
 public class ResourceEntity {
+
     private int id;
     private String resourceName;
     private Integer parentId;
@@ -28,14 +30,7 @@ public class ResourceEntity {
     private Date updateTime;
     private String isDelete;
     private String alias;
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
-    }
+    private String defaultPage;
 
     @Id
     @Column(name = "id")
@@ -49,7 +44,7 @@ public class ResourceEntity {
     }
 
     @Basic
-    @Column(name = "resourceName")
+    @Column(name = "resource_name")
     public String getResourceName() {
         return resourceName;
     }
@@ -202,5 +197,15 @@ public class ResourceEntity {
     public int hashCode() {
 
         return Objects.hash(id, resourceName, parentId, resourceType, inUse, resourcePath, resourceIcon, resourceSort, creator, createTime, updator, updateTime, isDelete);
+    }
+
+    @Basic
+    @Column(name = "default_page")
+    public String getDefaultPage() {
+        return defaultPage;
+    }
+
+    public void setDefaultPage(String defaultPage) {
+        this.defaultPage = defaultPage;
     }
 }

@@ -67,10 +67,8 @@ public class PermissionController {
 
     @PutMapping(value="/updatePower.do")
     public CmsMap updatePower(@RequestBody ResourceEntity entity) {
-        CmsMap<PermissionDTO> cMap = new CmsMap<>();
         permissionService.updateResouce(entity);
-        cMap.success();
-        return cMap;
+        return CmsMap.ok();
     }
 
     @PostMapping(value="/savePower.do")
