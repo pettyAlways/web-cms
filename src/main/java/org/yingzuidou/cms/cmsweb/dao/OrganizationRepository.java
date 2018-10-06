@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 组织机构持久化类
  *
- * @author yingzuidou
+ * @author 鹰嘴豆
  * @date 2018/9/13     
  */
 public interface OrganizationRepository extends PagingAndSortingRepository<OrganizationEntity, Integer>, QuerydslPredicateExecutor<OrganizationEntity> {

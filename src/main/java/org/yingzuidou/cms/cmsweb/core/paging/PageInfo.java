@@ -2,6 +2,7 @@ package org.yingzuidou.cms.cmsweb.core.paging;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 /**
  * 分页实体类
@@ -26,9 +27,9 @@ public class PageInfo {
      */
     private long counts;
 
-
     public Pageable toPageable() {
-       return PageRequest.of(page - 1, size);
+       Sort sort = new Sort(Sort.Direction.DESC,"create_time");
+       return PageRequest.of(page - 1, size, sort);
     }
 
     public int getPage() {

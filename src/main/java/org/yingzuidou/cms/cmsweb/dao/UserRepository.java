@@ -7,7 +7,7 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 /**
  * UserRepository
  *
- * @author shangguanls
+ * @author 鹰嘴豆
  * @date 2018/9/24
  */
 public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity, Integer>, QuerydslPredicateExecutor<CmsUserEntity> {
