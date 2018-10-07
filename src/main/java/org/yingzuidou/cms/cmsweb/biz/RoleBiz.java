@@ -1,24 +1,16 @@
 package org.yingzuidou.cms.cmsweb.biz;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
-import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
-import org.yingzuidou.cms.cmsweb.dto.UserDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.QCmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.QRoleEntity;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 
-import java.util.Optional;
 
 /**
  * RoleBiz

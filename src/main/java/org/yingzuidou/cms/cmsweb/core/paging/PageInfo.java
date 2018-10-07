@@ -28,7 +28,8 @@ public class PageInfo {
     private long counts;
 
     public Pageable toPageable() {
-       Sort sort = new Sort(Sort.Direction.DESC,"create_time");
+       // 注意这里不要写成create_time 不然会被拆分两个属性
+       Sort sort = new Sort(Sort.Direction.DESC,"createTime");
        return PageRequest.of(page - 1, size, sort);
     }
 

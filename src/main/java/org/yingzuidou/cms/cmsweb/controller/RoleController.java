@@ -32,13 +32,13 @@ public class RoleController {
     }
 
     @PostMapping("/save.do")
-    public CmsMap save(RoleEntity roleEntity) {
+    public CmsMap save(@RequestBody RoleEntity roleEntity) {
         roleService.save(roleEntity);
         return CmsMap.ok();
     }
 
     @PutMapping("/edit.do")
-    public CmsMap edit(RoleEntity roleEntity) {
+    public CmsMap edit(@RequestBody RoleEntity roleEntity) {
         roleService.edit(roleEntity);
         return CmsMap.ok();
     }
