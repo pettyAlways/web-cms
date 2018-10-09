@@ -40,6 +40,11 @@ public class UserDTO {
     private List<CmsUserEntity> users;
 
     /**
+     * 用户关联的角色
+     */
+    private List<Integer> roles;
+
+    /**
      * 资源树
      */
     private Node resourceTree;
@@ -90,6 +95,14 @@ public class UserDTO {
 
     public void setResourceTree(Node resourceTree) {
         this.resourceTree = resourceTree;
+    }
+
+    public List<Integer> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Integer> roles) {
+        this.roles = roles;
     }
 
     @Override

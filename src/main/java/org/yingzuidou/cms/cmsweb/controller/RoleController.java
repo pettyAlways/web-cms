@@ -31,6 +31,14 @@ public class RoleController {
         return result;
     }
 
+    @GetMapping("/listAll.do")
+    public CmsMap listAll() {
+        CmsMap<List<RoleEntity>> result = new CmsMap<>();
+        RoleDTO roleDTO = roleService.listAll();
+        result.success().setResult(roleDTO.getRoles());
+        return result;
+    }
+
     @PostMapping("/save.do")
     public CmsMap save(@RequestBody RoleEntity roleEntity) {
         roleService.save(roleEntity);

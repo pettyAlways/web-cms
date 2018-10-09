@@ -66,4 +66,12 @@ public class RoleServiceImpl implements RoleService{
         });
         roleRepository.saveAll(resourceList);
     }
+
+    @Override
+    public RoleDTO listAll() {
+        RoleDTO roleDTO = new RoleDTO();
+        List<RoleEntity> allRoles = roleRepository.findAllByIsDeleteIs("N");
+        roleDTO.setRoles(allRoles);
+        return roleDTO;
+    }
 }

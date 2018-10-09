@@ -9,6 +9,8 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 
+import java.util.List;
+
 /**
  * OrganizationController 组织机构
  *
@@ -64,5 +66,18 @@ public class UserController {
     @PostMapping("/login.do")
     public CmsMap login () {
         return CmsMap.ok().appendData("token",  "12333");
+    }
+
+    @PostMapping("/authUser.do")
+    public CmsMap authUser(@RequestBody UserDTO userDTO) {
+        userService.authUser(userDTO);
+        return CmsMap.ok();
+    }
+
+    @GetMapping("/acquireRoles.do")
+    public CmsMap acquireRoles(Integer id) {
+        CmsMap<List<Integer>> cMap = new CmsMap<>();
+        UserDTO userDTO = userService.acquireRoles(id);
+        return cMap.success().setResult(userDTO.getRoles());
     }
 }

@@ -20,4 +20,8 @@ public interface UserService {
     void delete(Integer[] delIds);
 
     UserDTO userInfo();
+
+    void authUser(UserDTO userDTO);
+
+    UserDTO acquireRoles(Integer id);
 }

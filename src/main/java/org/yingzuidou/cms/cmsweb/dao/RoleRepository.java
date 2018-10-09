@@ -16,4 +16,7 @@ import java.util.List;
 public interface RoleRepository extends PagingAndSortingRepository<RoleEntity, Integer>, QuerydslPredicateExecutor<RoleEntity> {
 
     List<RoleEntity> findAllByIdInAndIsDeleteIs(List<Integer> idsList, String isDelete);
+
+    List<RoleEntity> findAllByIsDeleteIs(String isDelete);
+
 }

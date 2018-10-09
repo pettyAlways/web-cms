@@ -20,4 +20,6 @@ public interface RoleService {
     void edit(RoleEntity roleEntity);
 
     void delete(String ids);
+
+    RoleDTO listAll();
 }
