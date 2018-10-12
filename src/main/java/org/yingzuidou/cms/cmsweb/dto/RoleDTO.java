@@ -14,6 +14,10 @@ import java.util.List;
 public class RoleDTO {
 
     /**
+     * 角色ID
+     */
+    private Integer id;
+    /**
      * 角色名字
      */
     private String roleName;
@@ -27,6 +31,11 @@ public class RoleDTO {
      * 是否启用
      */
     private String inUse;
+
+    /**
+     * 角色配置的资源
+     */
+    private List<Integer> resources;
 
     public String getRoleName() {
         return roleName;
@@ -50,5 +59,21 @@ public class RoleDTO {
 
     public void setInUse(String inUse) {
         this.inUse = inUse;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public List<Integer> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Integer> resources) {
+        this.resources = resources;
     }
 }

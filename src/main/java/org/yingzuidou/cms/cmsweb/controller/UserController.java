@@ -6,7 +6,6 @@ import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 
 import java.util.List;

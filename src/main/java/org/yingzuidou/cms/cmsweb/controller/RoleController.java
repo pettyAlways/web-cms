@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
+import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
 
@@ -55,5 +56,18 @@ public class RoleController {
     public CmsMap delete(String ids) {
         roleService.delete(ids);
         return CmsMap.ok();
+    }
+
+    @PostMapping("/resourceAuth.do")
+    public CmsMap resourceAuth(@RequestBody RoleDTO roleDTO) {
+        roleService.resourceAuth(roleDTO);
+        return CmsMap.ok();
+    }
+
+    @GetMapping("/acquireResource.do")
+    public CmsMap acquireResource(Integer id) {
+        RoleDTO roleDTO = roleService.acquireResource(id);
+        CmsMap<List<Integer>> result = new CmsMap<>();
+        return result.success().setResult(roleDTO.getResources());
     }
 }

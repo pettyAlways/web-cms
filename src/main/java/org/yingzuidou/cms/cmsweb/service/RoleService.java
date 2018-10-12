@@ -22,4 +22,8 @@ public interface RoleService {
     void delete(String ids);
 
     RoleDTO listAll();
+
+    void resourceAuth(RoleDTO roleDTO);
+
+    RoleDTO acquireResource(Integer roleId);
 }
