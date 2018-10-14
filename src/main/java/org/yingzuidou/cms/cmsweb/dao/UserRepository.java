@@ -12,4 +12,7 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
  */
 public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity, Integer>, QuerydslPredicateExecutor<CmsUserEntity> {
 
+    CmsUserEntity findByUserAccountAndIsDeleteIs(String userAccount, String isDelete);
+
+    CmsUserEntity findByUserAccountAndIdNotAndIsDelete(String userAccount, Integer id, String isDelete);
 }

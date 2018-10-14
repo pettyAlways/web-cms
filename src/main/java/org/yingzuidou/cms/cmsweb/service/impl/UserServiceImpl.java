@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
+import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
@@ -18,6 +19,7 @@ import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(CmsUserEntity cmsUserEntity) {
+        CmsUserEntity user = userBiz.findByUserAccount(cmsUserEntity.getUserAccount());
+        if (!Objects.isNull(user)) {
+            throw new BusinessException("账户名已存在");
+        }
         cmsUserEntity.setCreator(1);
         cmsUserEntity.setCreateTime(new Date());
         cmsUserEntity.setIsDelete("N");
@@ -65,6 +71,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(CmsUserEntity userEntity) {
+        CmsUserEntity hasUser = userBiz.existAccount(userEntity.getUserAccount(), userEntity.getId());
+        if (!Objects.isNull(hasUser)) {
+            throw new BusinessException("账户名已存在");
+        }
         Optional<CmsUserEntity> optionEntity = userBiz.findById(userEntity.getId());
         CmsUserEntity entity = optionEntity.get();
         CmsBeanUtils.copyMorNULLProperties(userEntity, entity);

@@ -62,11 +62,6 @@ public class UserController {
         return cmsMap.success().setResult(userDTO);
     }
 
-    @PostMapping("/login.do")
-    public CmsMap login () {
-        return CmsMap.ok().appendData("token",  "12333");
-    }
-
     @PostMapping("/authUser.do")
     public CmsMap authUser(@RequestBody UserDTO userDTO) {
         userService.authUser(userDTO);

@@ -25,6 +25,11 @@ public class UserDTO {
     private String userName;
 
     /**
+     * 用户名密码
+     */
+    private String userPassword;
+
+    /**
      * 账号
      */
     private String userAccount;
@@ -103,6 +108,14 @@ public class UserDTO {
 
     public void setRoles(List<Integer> roles) {
         this.roles = roles;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     @Override

@@ -10,12 +10,8 @@ import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.entity.QCmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.QOrganizationEntity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,5 +49,13 @@ public class UserBiz {
     public Optional<CmsUserEntity> findById(Integer id) {
         Predicate predicate = qCmsUserEntity.isDelete.eq("N").and(qCmsUserEntity.id.eq(id));
         return userRepository.findOne(predicate);
+    }
+
+    public CmsUserEntity findByUserAccount(String userAccount) {
+       return userRepository.findByUserAccountAndIsDeleteIs(userAccount, "N");
+    }
+
+    public CmsUserEntity existAccount(String userAccount, int id) {
+       return userRepository.findByUserAccountAndIdNotAndIsDelete(userAccount, id, "N");
     }
 }
