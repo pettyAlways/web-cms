@@ -16,6 +16,8 @@ import java.util.List;
 public interface RoleResourceRepository extends PagingAndSortingRepository<RoleResourceEntity, Integer>, QuerydslPredicateExecutor<RoleResourceEntity> {
 
     void deleteAllByRoleIdIs(Integer roleId);
+
     List<RoleResourceEntity> findAllByRoleIdIs(Integer roleId);
 
+    List<RoleResourceEntity> findAllByRoleIdIn(List<Integer> roleIds);
 }

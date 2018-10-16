@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.service.impl;
 
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
@@ -91,8 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO userInfo() {
         UserDTO userDTO = new UserDTO();
-        PermissionDTO permissionDTO = permissionService.listPower();
-        userDTO.setResourceTree(permissionDTO.getTree());
+        userDTO.setResourceTree((Node) SecurityUtils.getSubject().getSession().getAttribute("resources"));
         return userDTO;
     }
 

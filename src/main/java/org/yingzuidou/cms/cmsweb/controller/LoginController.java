@@ -3,12 +3,17 @@ package org.yingzuidou.cms.cmsweb.controller;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
+import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+import org.yingzuidou.cms.cmsweb.service.LoginService;
 
 import java.util.List;
 
@@ -22,6 +27,9 @@ import java.util.List;
 @RequestMapping(value="/login")
 public class LoginController {
 
+    @Autowired
+    private LoginService loginService;
+
     @PostMapping("/login.do")
     public CmsMap login(@RequestBody UserDTO userDTO) {
         CmsMap<List<Integer>> cMap = new CmsMap<>();
@@ -32,9 +40,12 @@ public class LoginController {
                 subject.login( token );
             } catch ( AuthenticationException authException ) {
                 cMap.error("10086", authException.getMessage());
+                return cMap;
             }
         }
-
-        return cMap;
+        CmsUserEntity user = (CmsUserEntity) subject.getSession().getAttribute("curUser");
+        Node permissions = loginService.acquireUserPermission(user.getId());
+        subject.getSession().setAttribute("resources", permissions);
+        return cMap.success().appendData("token", subject.getSession().getId());
     }
 }

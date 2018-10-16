@@ -34,42 +34,14 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionDTO listPower() {
-        Node root = new Node();
-        // 从字典中查找
-        root.setName("CMS平台资源");
-        root.setId(-1);
         List<ResourceEntity> flatNode = permissionRepository.findAllByIsDeleteIs("N");
-        getChildrenList(root, flatNode);
+        Node root = resouceBiz.acquirePermissions(flatNode);
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setTree(root);
         return permissionDTO;
     }
 
-    private void getChildrenList(Node parentNode, List<ResourceEntity> allNode) {
-        List<ResourceEntity> allNodeList = Optional.ofNullable(allNode).orElse(Collections.EMPTY_LIST);
-        List<Node> childrenNodeList = allNodeList.stream()
-                .filter(node -> parentNode.getId().equals(node.getParentId()))
-                .map(node -> {
-                    // Entity -> DTO 转化页面所需的信息
-                    Node child = new Node();
-                    child.setId(node.getId());
-                    child.setName(node.getResourceName());
-                    child.setIcon(node.getResourceIcon());
-                    child.setType(node.getResourceType());
-                    child.setSort(node.getResourceSort());
-                    child.setPath(node.getResourcePath());
-                    child.setAlias(node.getAlias());
-                    child.setDefaultPage(node.getDefaultPage());
-                    return child;
-                })
-                .collect(Collectors.toList());
-        parentNode.setChildren(childrenNodeList);
 
-        // 孩子列表获取出来可能是空，因此需要用Optional处理
-        Optional.ofNullable(childrenNodeList).orElse(Collections.EMPTY_LIST)
-                .forEach(node -> getChildrenList((Node) node, allNode));
-
-    }
     @Override
     public PermissionDTO subPower(PermissionDTO permissionDTO, PageInfo pageInfo) {
         Page<ResourceEntity> ResourcePage = resouceBiz.findAllResourceWithCondition(permissionDTO, pageInfo.toPageable());

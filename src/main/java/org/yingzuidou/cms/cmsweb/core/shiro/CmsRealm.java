@@ -31,7 +31,9 @@ public class CmsRealm extends AuthorizingRealm {
         String userName = token.getUsername();
         String password = new String((char[]) token.getCredentials());
         // 从数据库获取对应用户名密码的用户
-        CmsUserEntity user = userBiz.findByUserAccount(token.getUsername());
+        CmsUserEntity user = userBiz.findByUserAccount(userName);
+        // 保存当前用户
+        SecurityUtils.getSubject().getSession().setAttribute("curUser", user);
         if (Objects.isNull(user) || !user.getUserPassword().equals(password)) {
             throw new AuthenticationException("用户名或密码不存在");
         }
@@ -40,7 +42,7 @@ public class CmsRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = (String) SecurityUtils.getSubject().getPrincipal();
+        String userName = (String) SecurityUtils.getSubject().getPrincipal();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //获得该用户角色
         String role = null;
