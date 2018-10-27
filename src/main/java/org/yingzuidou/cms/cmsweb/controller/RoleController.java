@@ -1,9 +1,11 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
@@ -15,7 +17,7 @@ import java.util.List;
  * 角色管理相关接口
  *
  * @author 鹰嘴豆
- * @date 2018/10/1     
+ * @date 2018/10/1
  */
 @RestController
 @RequestMapping("/role")
@@ -23,6 +25,12 @@ public class RoleController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private ShiroService shiroService;
+
+    @Autowired
+    private ShiroFilterFactoryBean shiroFilterFactoryBean;
 
     @GetMapping("/list.do")
     public CmsMap list(RoleDTO roleDTO, PageInfo pageInfo) {
@@ -61,6 +69,8 @@ public class RoleController {
     @PostMapping("/resourceAuth.do")
     public CmsMap resourceAuth(@RequestBody RoleDTO roleDTO) {
         roleService.resourceAuth(roleDTO);
+        // 动态授权
+        shiroService.updatePermission(shiroFilterFactoryBean);
         return CmsMap.ok();
     }
 

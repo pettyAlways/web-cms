@@ -7,10 +7,13 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
+import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,20 +40,13 @@ public class CmsRealm extends AuthorizingRealm {
         if (Objects.isNull(user) || !user.getUserPassword().equals(password)) {
             throw new AuthenticationException("用户名或密码不存在");
         }
-        return new SimpleAuthenticationInfo(token.getPrincipal(), user.getUserPassword(), getName());
+        return new SimpleAuthenticationInfo(user, user.getUserPassword(), getName());
     }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String userName = (String) SecurityUtils.getSubject().getPrincipal();
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        //获得该用户角色
-        String role = null;
-        Set<String> set = new HashSet<>();
-        //需要将 role 封装到 Set 作为 info.setRoles() 的参数
-        set.add(role);
-        //设置该用户拥有的角色
-        info.setRoles(set);
-        return info;
+        System.out.println("需要调用subject.hasRoles()才能调用该方法");
+        return null;
     }
+
 }

@@ -26,10 +26,12 @@ public class CmsMap<T> extends HashMap<String, Object>{
         return this;
     }
 
-    public void error(String code, String message) {
-        this.put("code", code);
-        this.put("message", message);
-        this.put("flag", false);
+    public static CmsMap error(String code, String message) {
+        CmsMap<Object> cmsMap = new CmsMap<>();
+        cmsMap.put("code", code);
+        cmsMap.put("message", message);
+        cmsMap.put("flag", false);
+        return cmsMap;
     }
 
     public static <T> CmsMap ok() {

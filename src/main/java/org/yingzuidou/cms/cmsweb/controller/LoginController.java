@@ -4,10 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
@@ -47,5 +44,21 @@ public class LoginController {
         Node permissions = loginService.acquireUserPermission(user.getId());
         subject.getSession().setAttribute("resources", permissions);
         return cMap.success().appendData("token", subject.getSession().getId());
+    }
+
+    @PostMapping("/logout.do")
+    public CmsMap logout() {
+        SecurityUtils.getSubject().logout();
+        return CmsMap.ok();
+    }
+
+    /**
+     * 未授权接口返回
+     *
+     * @return 403未授权状态码
+     */
+    @GetMapping("/unAuthor.do")
+    public CmsMap unAuthor() {
+        return CmsMap.error("403", "当前请求资源未授权");
     }
 }

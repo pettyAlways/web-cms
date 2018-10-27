@@ -10,13 +10,13 @@ import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author dell
+ * @author 鹰嘴豆
  * @date 2018/9/13     
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody

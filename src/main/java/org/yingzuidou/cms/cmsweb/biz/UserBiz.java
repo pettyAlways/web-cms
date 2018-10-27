@@ -7,12 +7,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
+import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.QCmsUserEntity;
+import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
+import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * UserBiz
@@ -27,6 +34,12 @@ public class UserBiz {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     public Page<CmsUserEntity> findAllUserWithCondition(UserDTO userDTO, Pageable pageable) {
         BooleanExpression expression = qCmsUserEntity.isDelete.eq("N").and(qCmsUserEntity.userDepart.eq(userDTO.getUserDepart()));
@@ -57,5 +70,18 @@ public class UserBiz {
 
     public CmsUserEntity existAccount(String userAccount, int id) {
        return userRepository.findByUserAccountAndIdNotAndIsDelete(userAccount, id, "N");
+    }
+
+    public List<String> findRoleNameByUserId(Integer userId) {
+        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(userId);
+        List<String> roleNames = null;
+        if (!Objects.isNull(userRoleEntities)) {
+            List<Integer> roleIds = userRoleEntities.stream().map(item -> item.getRoleId()).collect(Collectors.toList());
+            List<RoleEntity> roleEntities = roleRepository.findAllByIdInAndIsDeleteIs(roleIds, "N");
+            if (!Objects.isNull(roleEntities)) {
+                roleNames = roleEntities.stream().map(role -> role.getRoleName()).collect(Collectors.toList());
+            }
+        }
+        return roleNames;
     }
 }

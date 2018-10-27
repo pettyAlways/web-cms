@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dao.PermissionRepository;
+import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.QResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
@@ -30,6 +31,8 @@ public class ResourceBiz {
     @Autowired
     private PermissionRepository permissionRepository;
     private QResourceEntity qResourceEntity = QResourceEntity.resourceEntity;
+    @Autowired
+    private RoleResourceRepository roleResourceRepository;
 
     public Page<ResourceEntity> findAllResourceWithCondition(PermissionDTO permissionDTO, Pageable pageable) {
         BooleanExpression expression = qResourceEntity.isDelete.eq("N").and(qResourceEntity.parentId
@@ -74,5 +77,9 @@ public class ResourceBiz {
         Optional.ofNullable(childrenNodeList).orElse(Collections.EMPTY_LIST)
                 .forEach(node -> getChildrenList((Node) node, allNode));
 
+    }
+
+    public List<Object> acquireRoleResources() {
+        return roleResourceRepository.acquireRoleResources();
     }
 }

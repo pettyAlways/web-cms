@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
@@ -65,5 +66,10 @@ public class OrganizationController {
         return cMap.success();
     }
 
-
+    @DeleteMapping(value="/delete11.do")
+    public CmsMap delete11(@RequestBody Integer[] delIds) {
+        CmsMap<OrganizationEntity> cMap = new CmsMap<>();
+        organizationService.delete(delIds);
+        return cMap.success();
+    }
 }

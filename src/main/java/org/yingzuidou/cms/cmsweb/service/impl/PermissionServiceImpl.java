@@ -3,6 +3,7 @@ package org.yingzuidou.cms.cmsweb.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
