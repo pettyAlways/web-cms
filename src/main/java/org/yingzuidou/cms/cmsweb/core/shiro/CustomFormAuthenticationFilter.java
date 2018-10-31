@@ -1,15 +1,13 @@
 package org.yingzuidou.cms.cmsweb.core.shiro;
 
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * CustomFormAuthenticationFilter
@@ -39,20 +37,9 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
             if (logger.isTraceEnabled()) {
                 logger.trace("试图访问一个需要认证的地址，重定向到登录页面");
             }
-
-            saveRequestAndRedirectToLogin(request, response);
+            // 需要登录才能访问
+            WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
-    }
-    @Override
-    protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json; charset=utf-8");
-        PrintWriter writer = response.getWriter();
-        Map<String, Object> map = new HashMap<>();
-        map.put("flag", false);
-        map.put("code", "401");
-        map.put("message", "请求未经授权，请登录");
-        writer.write(map.toString());
     }
 }

@@ -45,7 +45,7 @@ public class ShiroServiceImpl implements ShiroService {
             filterChainDefinitionMap.put(objs[0].toString(), String.format(PREMISSION_STRING, objs[1]));
         });
 
-        // 其他没有匹配的路径都需要登录
+        // 其他没有匹配的路径都需要登录了才能访问
         filterChainDefinitionMap.put("/**", "authc");
         return filterChainDefinitionMap;
     }
