@@ -1,11 +1,7 @@
 package org.yingzuidou.cms.cmsweb.core;
 
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * ResponseUtil
@@ -14,7 +10,6 @@ import java.util.Map;
  * @date 2018/10/31
  */
 public class ResponseUtil {
-
 
     public static void sendCode(ServletResponse response, int status) {
         try {
