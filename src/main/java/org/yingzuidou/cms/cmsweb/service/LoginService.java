@@ -10,5 +10,4 @@ import org.yingzuidou.cms.cmsweb.core.vo.Node;
  */
 public interface LoginService {
 
-    Node acquireUserPermission(int userId);
 }

@@ -3,9 +3,8 @@ package org.yingzuidou.cms.cmsweb.core.configuration;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.AnonymousFilter;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
-import org.yingzuidou.cms.cmsweb.core.interceptor.SessionInterceptor;
 import org.yingzuidou.cms.cmsweb.core.shiro.CmsRealm;
 import org.yingzuidou.cms.cmsweb.core.shiro.CustomFormAuthenticationFilter;
 import org.yingzuidou.cms.cmsweb.core.shiro.CustomRolesAuthorizationFilter;
@@ -34,9 +32,6 @@ import java.util.*;
 
 @Configuration
 public class CmsConfiguration implements WebMvcConfigurer {
-
-    @Autowired
-    private SessionInterceptor sessionInterceptor;
 
     @Autowired
     private ResourceBiz resourceBiz;
@@ -68,18 +63,18 @@ public class CmsConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        // securityManager.setSessionManager(sessionManager());
+        securityManager.setSessionManager(sessionManager());
         securityManager.setRealm(cmsRealm());
         return securityManager;
     }
 
-   /* @Bean
+    @Bean
     public DefaultWebSessionManager sessionManager() {
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        defaultWebSessionManager.setGlobalSessionTimeout(100000);
+        defaultWebSessionManager.setGlobalSessionTimeout(6000000);
         defaultWebSessionManager.setDeleteInvalidSessions(true);
         return defaultWebSessionManager;
-    }*/
+    }
     /**
      * 自定义身份认证 realm;
      * <p>
@@ -115,8 +110,4 @@ public class CmsConfiguration implements WebMvcConfigurer {
         return filterRegistrationBean;
     }
 
-    /*@Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(sessionInterceptor).addPathPatterns("/**");
-    }*/
 }

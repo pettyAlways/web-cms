@@ -1,6 +1,7 @@
 package org.yingzuidou.cms.cmsweb.service;
 
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 
@@ -21,4 +22,6 @@ public interface PermissionService {
     void updateResouce(ResourceEntity entity);
 
     void saveResource(ResourceEntity entity);
+
+    Node acquireUserPermission(int userId);
 }

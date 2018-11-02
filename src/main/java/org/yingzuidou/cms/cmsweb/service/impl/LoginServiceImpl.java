@@ -25,32 +25,5 @@ import java.util.stream.Collectors;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    @Autowired
-    private RoleResourceRepository roleResourceRepository;
 
-    @Autowired
-    private UserRoleRepository userRoleRepository;
-
-    @Autowired
-    private PermissionRepository permissionRepository;
-
-    @Autowired
-    private ResourceBiz resouceBiz;
-
-    @Override
-    public Node acquireUserPermission(int userId) {
-        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(userId);
-        List<ResourceEntity> resourceEntities = null;
-        if (!Objects.isNull(userRoleEntities)) {
-           List<Integer> roleIds =  userRoleEntities.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
-           List<RoleResourceEntity> roleResourceEntities = roleResourceRepository.findAllByRoleIdIn(roleIds);
-           if (!Objects.isNull(roleResourceEntities)) {
-               List<Integer> resourceIds = roleResourceEntities.stream().map(RoleResourceEntity::getResourceId).collect(Collectors.toList());
-               if (!Objects.isNull(resourceIds)) {
-                   resourceEntities = permissionRepository.findAllByIdInAndIsDeleteIs(resourceIds, "N");
-               }
-           }
-        }
-        return resouceBiz.acquirePermissions(resourceEntities);
-    }
 }

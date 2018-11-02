@@ -8,10 +8,14 @@ import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dao.PermissionRepository;
+import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
+import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
+import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
 import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
 
@@ -26,6 +30,12 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PermissionServiceImpl implements PermissionService {
+
+    @Autowired
+    private RoleResourceRepository roleResourceRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     @Autowired
     private PermissionRepository permissionRepository;
@@ -85,5 +95,22 @@ public class PermissionServiceImpl implements PermissionService {
         // 如果不设置jpa会用null覆盖mysql的默认值
         entity.setIsDelete("N");
         permissionRepository.save(entity);
+    }
+
+    @Override
+    public Node acquireUserPermission(int userId) {
+        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(userId);
+        List<ResourceEntity> resourceEntities = null;
+        if (!Objects.isNull(userRoleEntities)) {
+            List<Integer> roleIds =  userRoleEntities.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
+            List<RoleResourceEntity> roleResourceEntities = roleResourceRepository.findAllByRoleIdIn(roleIds);
+            if (!Objects.isNull(roleResourceEntities)) {
+                List<Integer> resourceIds = roleResourceEntities.stream().map(RoleResourceEntity::getResourceId).collect(Collectors.toList());
+                if (!Objects.isNull(resourceIds)) {
+                    resourceEntities = permissionRepository.findAllByIdInAndIsDeleteIs(resourceIds, "N");
+                }
+            }
+        }
+        return resouceBiz.acquirePermissions(resourceEntities);
     }
 }

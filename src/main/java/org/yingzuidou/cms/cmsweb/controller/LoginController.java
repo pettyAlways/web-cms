@@ -40,9 +40,7 @@ public class LoginController {
                 return cMap;
             }
         }
-        CmsUserEntity user = (CmsUserEntity) subject.getSession().getAttribute("curUser");
-        Node permissions = loginService.acquireUserPermission(user.getId());
-        subject.getSession().setAttribute("resources", permissions);
+        CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
         return cMap.success().appendData("token", subject.getSession().getId());
     }
 

@@ -93,7 +93,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO userInfo() {
         UserDTO userDTO = new UserDTO();
-        userDTO.setResourceTree((Node) SecurityUtils.getSubject().getSession().getAttribute("resources"));
+        CmsUserEntity user = (CmsUserEntity)SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal();
+        Node permissions = permissionService.acquireUserPermission(user.getId());
+        userDTO.setResourceTree(permissions);
         return userDTO;
     }
 
