@@ -38,7 +38,7 @@ public class ShiroServiceImpl implements ShiroService {
         String[] paths = skipPath.split(",");
         Arrays.stream(paths).forEach(item -> filterChainDefinitionMap.put(item, "anon"));
 
-        // 需要校验的路径
+        // 需要校验按钮级别的权限路径（菜单模块等权限校验交给前端vue路由）
         List<Object> resources = resourceBiz.acquireRoleResources();
         resources.forEach(item -> {
             Object[] objs = (Object[])item;

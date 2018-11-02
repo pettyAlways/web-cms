@@ -24,7 +24,7 @@ public interface RoleResourceRepository extends PagingAndSortingRepository<RoleR
 
     @Query(nativeQuery = true, value = "SELECT r.resource_path, GROUP_CONCAT( role.role_name ) " +
             "FROM resource r LEFT JOIN role_resource roleReource ON r.id = roleReource.resource_id " +
-            "LEFT JOIN role role ON role.id = roleReource.role_id WHERE r.is_delete = 'N' GROUP BY r.id")
+            "LEFT JOIN role role ON role.id = roleReource.role_id WHERE r.is_delete = 'N' AND r.resource_type= 'button' GROUP BY r.id")
     List<Object> acquireRoleResources();
 
 }
