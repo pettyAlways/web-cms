@@ -48,6 +48,7 @@ public class ResourceBiz {
         // 从字典中查找
         root.setName("CMS平台资源");
         root.setId(-1);
+        root.setType("root");
         getChildrenList(root, flatNode);
         return root;
     }
