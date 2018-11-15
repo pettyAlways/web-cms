@@ -63,7 +63,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void deletePower(String ids) {
-        List<Integer> idsList = Arrays.stream(ids.split(",")).map(item -> Integer.valueOf(item))
+        List<Integer> idsList = Arrays.stream(ids.split(",")).map(Integer::valueOf)
                 .collect(Collectors.toList());
         List<ResourceEntity> resourceList = permissionRepository.findAllByIdInAndIsDeleteIs(idsList, "N");
         Optional.ofNullable(resourceList).orElse(Collections.emptyList()).forEach(item -> {
