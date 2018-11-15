@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.core.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,13 +21,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public CmsMap handleGlobalException(HttpServletRequest req, Exception e) {
-        CmsMap cMap = new CmsMap<>();
+    public CmsMap handleGlobalException(HttpServletRequest req, Exception e) throws JsonProcessingException {
+        CmsMap cMap = null;
         if (e instanceof BusinessException) {
-            cMap.error(((BusinessException) e).getCode(), e.getMessage());
+            cMap = CmsMap.error(((BusinessException) e).getCode(), e.getMessage());
         } else if (e instanceof RuntimeException) {
             logger.error("系统异常", e);
-            cMap.error("500", "系统异常");
+            cMap = CmsMap.error("500", "系统异常");
         }
         return cMap;
     }
