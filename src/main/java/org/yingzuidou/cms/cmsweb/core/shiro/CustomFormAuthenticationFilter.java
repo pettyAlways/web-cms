@@ -19,6 +19,15 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * 当访问需要登录的资源时，如果session已经过期或者重新启动时就会执行下面的方法
+     * shiro在用户登录时会缓存好用户，上面的两种操作都会清空用户导致shiro认为没有登录
+     *
+     * @param request 前端请求
+     * @param response 请求返回
+     * @return
+     * @throws Exception
+     */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {

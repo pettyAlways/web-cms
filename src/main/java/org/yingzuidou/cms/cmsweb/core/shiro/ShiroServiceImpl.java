@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ShiroServiceImpl
@@ -42,7 +39,7 @@ public class ShiroServiceImpl implements ShiroService {
         List<Object> resources = resourceBiz.acquireRoleResources();
         resources.forEach(item -> {
             Object[] objs = (Object[])item;
-            filterChainDefinitionMap.put(objs[0].toString(), String.format(PREMISSION_STRING, objs[1]));
+            filterChainDefinitionMap.put(objs[0].toString(), String.format(PREMISSION_STRING, Objects.isNull(objs[1]) ? "" : objs[1]));
         });
 
         // 其他没有匹配的路径都需要登录了才能访问

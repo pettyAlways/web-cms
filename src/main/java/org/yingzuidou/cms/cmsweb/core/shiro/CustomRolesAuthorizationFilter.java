@@ -1,18 +1,14 @@
 package org.yingzuidou.cms.cmsweb.core.shiro;
 
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
-import org.yingzuidou.cms.cmsweb.core.ResponseUtil;
 import org.yingzuidou.cms.cmsweb.core.SpringUtil;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -25,11 +21,12 @@ import java.util.*;
  */
 public class CustomRolesAuthorizationFilter extends AuthorizationFilter {
 
-    private HttpServletRequest request;
-
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         Subject subject = getSubject(request, response);
+        if (subject.getPrincipals() == null) {
+            return false;
+        }
         CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
 
         if (null == user) {
@@ -48,16 +45,23 @@ public class CustomRolesAuthorizationFilter extends AuthorizationFilter {
         return !disjoint;
     }
 
+    /**
+     * 当isAccessAllowed方法返回的是false就会进入下面的方法中
+     *
+     * @param request 前端请求
+     * @param response 请求返回
+     * @return
+     * @throws IOException
+     */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
-
         Subject subject = getSubject(request, response);
-        // If the subject isn't identified, redirect to login URL
+        // 访问拒绝有一种情况就是用户已经退出登录，这时候需要返回一个错误码为401
         if (subject.getPrincipal() == null) {
-            ResponseUtil.sendCode(response, HttpServletResponse.SC_UNAUTHORIZED);
-
+            WebUtils.toHttp(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            // 访问拒绝还有一种情况就是没有权限访问，这时候需要返回一个错误码为403
         } else {
-            ResponseUtil.sendCode(response, HttpServletResponse.SC_FORBIDDEN);
+            WebUtils.toHttp(response).sendError(HttpServletResponse.SC_FORBIDDEN);
         }
         return false;
     }
