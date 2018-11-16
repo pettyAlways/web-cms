@@ -32,7 +32,7 @@ import java.util.Map;
  */
 
 @Configuration
-public class CmsConfiguration implements WebMvcConfigurer {
+public class CmsConfiguration{
 
     @Autowired
     private ResourceBiz resourceBiz;
@@ -121,16 +121,6 @@ public class CmsConfiguration implements WebMvcConfigurer {
     @Bean("lifecycleBeanPostProcessor")
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
-    }
-
-    @Bean("delegatingFilterProxy")
-    public FilterRegistrationBean delegatingFilterProxy(){
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-        DelegatingFilterProxy proxy = new DelegatingFilterProxy();
-        proxy.setTargetFilterLifecycle(true);
-        proxy.setTargetBeanName("shiroFilter");
-        filterRegistrationBean.setFilter(proxy);
-        return filterRegistrationBean;
     }
 
 }
