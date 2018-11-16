@@ -48,4 +48,9 @@ public interface ConstService {
      * @param ids 常量ID以逗号隔开
      */
     void delete(String ids);
+
+    /**
+     * 刷新Ehcache缓存
+     */
+    void refresh(String type);
 }

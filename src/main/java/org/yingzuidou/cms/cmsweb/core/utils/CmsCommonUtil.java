@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.util;
+package org.yingzuidou.cms.cmsweb.core.utils;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;

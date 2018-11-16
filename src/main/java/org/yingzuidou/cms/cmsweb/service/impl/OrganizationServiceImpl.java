@@ -10,7 +10,7 @@ import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
-import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

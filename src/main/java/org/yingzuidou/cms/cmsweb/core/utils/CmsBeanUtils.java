@@ -1,4 +1,4 @@
-package org.yingzuidou.cms.cmsweb.util;
+package org.yingzuidou.cms.cmsweb.core.utils;
 /**
  * CmsBeanUtils description goes here
  *

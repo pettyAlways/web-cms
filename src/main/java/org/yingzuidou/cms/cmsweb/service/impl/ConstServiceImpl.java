@@ -11,8 +11,8 @@ import org.yingzuidou.cms.cmsweb.dao.CmsConstRepository;
 import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.service.ConstService;
-import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
-import org.yingzuidou.cms.cmsweb.util.CmsCommonUtil;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,5 +93,13 @@ public class ConstServiceImpl implements ConstService {
         List<Integer> idsList = Arrays.stream(ids.split(",")).map(Integer::valueOf)
                 .collect(Collectors.toList());
         cmsConstRepository.deleteAllByIdIn(idsList);
+    }
+
+    /**
+     * 刷新缓存
+     */
+    @Override
+    public void refresh(String type) {
+        constBiz.evictAndRefresh(type);
     }
 }

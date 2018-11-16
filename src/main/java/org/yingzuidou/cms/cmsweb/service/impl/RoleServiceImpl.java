@@ -12,7 +12,7 @@ import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
-import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

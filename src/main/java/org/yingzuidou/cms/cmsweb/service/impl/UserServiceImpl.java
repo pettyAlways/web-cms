@@ -11,13 +11,12 @@ import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
-import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
 import org.yingzuidou.cms.cmsweb.service.UserService;
-import org.yingzuidou.cms.cmsweb.util.CmsBeanUtils;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 
 import java.util.Date;
 import java.util.List;

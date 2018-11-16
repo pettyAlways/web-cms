@@ -20,4 +20,6 @@ public interface CmsConstRepository extends PagingAndSortingRepository<CmsConstE
      * @param ids 常量id列表
      */
     void deleteAllByIdIn(List<Integer> ids);
+
+    List<CmsConstEntity> findAllByType(String type);
 }
