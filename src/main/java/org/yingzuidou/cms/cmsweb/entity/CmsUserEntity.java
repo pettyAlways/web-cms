@@ -28,6 +28,7 @@ public class CmsUserEntity {
     private Integer updator;
     private Date updateTime;
     private String isDelete;
+    private String uuid;
 
     @Id
     @Column(name = "id")
@@ -168,6 +169,16 @@ public class CmsUserEntity {
 
     public void setIsDelete(String isDelete) {
         this.isDelete = isDelete;
+    }
+
+    @Basic
+    @Column(name = "uuid")
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override

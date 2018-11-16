@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dao.PermissionRepository;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
@@ -13,9 +14,7 @@ import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.QResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -33,6 +32,11 @@ public class ResourceBiz {
     private QResourceEntity qResourceEntity = QResourceEntity.resourceEntity;
     @Autowired
     private RoleResourceRepository roleResourceRepository;
+    /**
+     * 缓存管理类
+     */
+    @Autowired
+    private CmsCacheManager cmsCacheManager;
 
     public Page<ResourceEntity> findAllResourceWithCondition(PermissionDTO permissionDTO, Pageable pageable) {
         BooleanExpression expression = qResourceEntity.isDelete.eq("N").and(qResourceEntity.parentId
@@ -43,10 +47,21 @@ public class ResourceBiz {
         return permissionRepository.findAll(expression, pageable);
     }
 
+    /**
+     * 获取所有的资源树
+     *
+     * @param flatNode 资源列表
+     * @return 资源树节点
+     */
     public Node acquirePermissions(List<ResourceEntity> flatNode) {
         Node root = new Node();
-        // 从字典中查找
-        root.setName("CMS平台资源");
+        // 从系统常量中获取标题
+        Map<String, String> systemParams = cmsCacheManager.systemConst();
+        String rootResource = systemParams.get("root_resource");
+        if (Objects.isNull(rootResource)) {
+            rootResource = "Cms资源平台";
+        }
+        root.setName(rootResource);
         root.setId(-1);
         root.setType("root");
         getChildrenList(root, flatNode);

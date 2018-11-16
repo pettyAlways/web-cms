@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.core.configuration;
 
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -21,7 +22,7 @@ import org.yingzuidou.cms.cmsweb.core.shiro.CustomRolesAuthorizationFilter;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 
 import javax.servlet.Filter;
-import java.util.*;
+import java.util.Map;
 
 /**
  * 配置属性类
@@ -76,14 +77,36 @@ public class CmsConfiguration implements WebMvcConfigurer {
         return defaultWebSessionManager;
     }
     /**
-     * 自定义身份认证 realm;
+     * 自定义身份认证 realm,指定密码加密的credentialsMetcher
      * <p>
      * 必须写这个类，并加上 @Bean 注解，目的是注入 cmsRealm，
      * 否则会影响 cmsRealm类 中其他类的依赖注入
      */
     @Bean
     public CmsRealm cmsRealm() {
-        return new CmsRealm();
+        CmsRealm cmsRealm = new CmsRealm();
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        // 加密算法的名称
+        matcher.setHashAlgorithmName("MD5");
+        // 配置加密的次数
+        matcher.setHashIterations(1024);
+        cmsRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        return cmsRealm;
+    }
+
+    /**
+     * 默认使用的是SimpleCredentialsMatcher，这里要使用HashedCredentialsMatcher
+     * 用户密码不可逆，所以查看用户信息看到的是密文
+     * @return HashedCredentialsMatcher对象
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        // 加密算法的名称
+        matcher.setHashAlgorithmName("MD5");
+        // 配置加密的次数
+        matcher.setHashIterations(1024);
+        return matcher;
     }
 
     @Bean("defaultAdvisorAutoProxyCreator")

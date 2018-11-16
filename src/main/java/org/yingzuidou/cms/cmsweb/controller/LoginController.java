@@ -1,18 +1,17 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
-import org.yingzuidou.cms.cmsweb.core.vo.Node;
+import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
-import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
-
-import java.util.List;
 
 /**
  * 登录控制类
@@ -29,19 +28,21 @@ public class LoginController {
 
     @PostMapping("/login.do")
     public CmsMap login(@RequestBody UserDTO userDTO) {
-        CmsMap<List<Integer>> cMap = new CmsMap<>();
         Subject subject = SecurityUtils.getSubject();
         if ( !subject.isAuthenticated() ) {
             UsernamePasswordToken token = new UsernamePasswordToken(userDTO.getUserAccount(), userDTO.getUserPassword());
             try {
                 subject.login( token );
+            } catch (IncorrectCredentialsException iException) {
+                throw new BusinessException("账号或者密码不正确");
             } catch ( AuthenticationException authException ) {
-                cMap.error("10086", authException.getMessage());
-                return cMap;
+                throw new BusinessException(authException.getMessage());
             }
         }
         CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
-        return cMap.success().appendData("token", subject.getSession().getId());
+        return CmsMap.<CmsUserEntity>ok()
+                .appendData("token", subject.getSession().getId())
+                .setResult(user);
     }
 
     @PostMapping("/logout.do")

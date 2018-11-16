@@ -1,7 +1,9 @@
 package org.yingzuidou.cms.cmsweb.core.utils;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ByteSource;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 /**
@@ -17,6 +19,8 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
  */
 public class CmsCommonUtil {
 
+    private static String hashAlgorithmName = "MD5";
+    private static int hashIterations = 1024;
     /**
      * 从shiro中得到当前的登录用户
      *
@@ -37,5 +41,18 @@ public class CmsCommonUtil {
     public static Integer getCurrentLoginUserId() {
         CmsUserEntity currentUser = getCurrentLoginUser();
         return currentUser.getId();
+    }
+
+    /**
+     * 根据一个uuid生成盐值，使用md5对密码进行加密
+     *
+     * @param uuid UUID
+     * @param credentials 密码
+     * @return
+     */
+    public static String getMd5PasswordText(String uuid, String credentials) {
+        ByteSource credentialsSalt = ByteSource.Util.bytes(uuid);
+        String password = new SimpleHash(hashAlgorithmName, credentials, credentialsSalt, hashIterations).toString();
+        return password;
     }
 }
