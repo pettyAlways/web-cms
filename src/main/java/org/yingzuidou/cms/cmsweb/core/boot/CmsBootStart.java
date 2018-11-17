@@ -1,11 +1,12 @@
 package org.yingzuidou.cms.cmsweb.core.boot;
 
+import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import org.yingzuidou.cms.cmsweb.biz.ConstBiz;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
+import org.yingzuidou.cms.cmsweb.service.ConstService;
 
 import java.util.List;
 
@@ -25,21 +26,23 @@ import java.util.List;
 public class CmsBootStart implements ApplicationRunner {
 
     @Autowired
-    private ConstBiz constBiz;
+    private ConstService constService;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     /**
      * 获取系统常量管理中的系统常量和枚举常量
      *
      * @param args 命令行参数
-     * @throws Exception 异常抛出
      */
     @Override
     public void run(ApplicationArguments args) {
         // 获取系统常量列表
-        List<CmsConstEntity> constList = constBiz.findAllConstByType("1");
+        List<CmsConstEntity> constList = constService.findAllConstByType("1");
         System.out.println("加载好系统常量：" + constList);
         // 获取枚举常量
-        List<CmsConstEntity> enumList = constBiz.findAllConstByType("2");
+        List<CmsConstEntity> enumList = constService.findAllConstByType("2");
         System.out.println("加载好枚举常量：" + enumList);
     }
 }

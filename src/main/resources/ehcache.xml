@@ -17,4 +17,15 @@
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU" />
+
+    <!-- 资源访问缓存-->
+    <cache
+            name="resourceCache"
+            eternal="false"
+            maxElementsInMemory="1000"
+            overflowToDisk="false"
+            diskPersistent="false"
+            timeToIdleSeconds="1600"
+            timeToLiveSeconds="1600"
+            memoryStoreEvictionPolicy="LRU" />
 </ehcache>

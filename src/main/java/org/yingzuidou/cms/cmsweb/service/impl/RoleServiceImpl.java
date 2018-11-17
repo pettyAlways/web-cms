@@ -1,11 +1,13 @@
 package org.yingzuidou.cms.cmsweb.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.RoleBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
@@ -82,15 +84,21 @@ public class RoleServiceImpl implements RoleService{
         return roleDTO;
     }
 
+    /**
+     * 保存当前用户新的授权资源
+     *
+     * @param roleDTO 新授权资源
+     */
     @Override
-    public void resourceAuth(RoleDTO roleDTO) {
+    @CacheEvict(value="resourceCache", key="'resourceTree_'+#userId")
+    public void resourceAuth(RoleDTO roleDTO, Integer userId) {
         roleResourceRepository.deleteAllByRoleIdIs(roleDTO.getId());
         roleDTO.getResources().forEach(item -> {
             RoleResourceEntity roleResourceEntity = new RoleResourceEntity();
             roleResourceEntity.setRoleId(roleDTO.getId());
             roleResourceEntity.setResourceId(item);
             roleResourceEntity.setCreateTime(new Date());
-            roleResourceEntity.setCreator(1);
+            roleResourceEntity.setCreator(userId);
             roleResourceRepository.save(roleResourceEntity);
         });
     }

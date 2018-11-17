@@ -23,7 +23,7 @@ public interface RoleService {
 
     RoleDTO listAll();
 
-    void resourceAuth(RoleDTO roleDTO);
+    void resourceAuth(RoleDTO roleDTO, Integer userId);
 
     RoleDTO acquireResource(Integer roleId);
 }

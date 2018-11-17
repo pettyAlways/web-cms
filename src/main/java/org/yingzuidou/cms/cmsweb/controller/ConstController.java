@@ -54,16 +54,4 @@ public class ConstController {
         constService.delete(ids);
         return CmsMap.ok();
     }
-
-    /**
-     * 清空Ehcache缓存并重新获取
-     *
-     * @return 执行结果
-     */
-    @GetMapping(value="/refresh.do")
-    public CmsMap refresh(String type) {
-        constService.refresh(type);
-        return CmsMap.ok();
-    }
-
 }

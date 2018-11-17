@@ -1,9 +1,10 @@
 package org.yingzuidou.cms.cmsweb.core.cache;
 
+import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.yingzuidou.cms.cmsweb.biz.ConstBiz;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
+import org.yingzuidou.cms.cmsweb.service.ConstService;
 
 import java.util.*;
 
@@ -17,22 +18,25 @@ import java.util.*;
  * <p>
  * 时间           作者          版本        描述
  * ====================================================
- * 2018/11/16     鹰嘴哦度      v1.0        获取系统常量列表
+ * 2018/11/16     鹰嘴逗        v1.0        获取系统常量列表
  */
 @Service
-public class CmsCacheManager{
+public class CmsCacheManager {
 
     @Autowired
-    private ConstBiz constBiz;
+    private CacheManager cacheManager;
+
+    @Autowired
+    private ConstService constService;
 
     /**
-     * 从缓存(数据库)中获取系统常量
+     *  查询缓存中的系统常量，如果没在缓存没命中则从数据库查询
      *
-     * @return 系统常量
+     * @return 系统常量列表
      */
     public  Map<String, String> systemConst() {
         Map<String, String> systemParams = new HashMap<>(100);
-        List<CmsConstEntity> constEntities = constBiz.findAllConstByType("1");
+        List<CmsConstEntity> constEntities = constService.findAllConstByType("1");
         Optional.ofNullable(constEntities).orElse(new ArrayList <>())
                 .forEach(item -> systemParams.put(item.getConstKey(), item.getConstValue()));
         return systemParams;

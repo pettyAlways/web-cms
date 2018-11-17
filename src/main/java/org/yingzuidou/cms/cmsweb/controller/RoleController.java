@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
-import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
 
@@ -66,10 +66,17 @@ public class RoleController {
         return CmsMap.ok();
     }
 
+    /**
+     * 更新当前用户的被授权的资源，动态更新shiro中的已缓存的
+     * 旧授权资源，清空缓存在resourceCache中以resourceTree_用户id
+     * 为key的资源
+     *
+     * @param roleDTO 新授权的资源
+     * @return 返回状态
+     */
     @PostMapping("/resourceAuth.do")
     public CmsMap resourceAuth(@RequestBody RoleDTO roleDTO) {
-        roleService.resourceAuth(roleDTO);
-        // 动态授权
+        roleService.resourceAuth(roleDTO, CmsCommonUtil.getCurrentLoginUserId());
         shiroService.updatePermission(shiroFilterFactoryBean);
         return CmsMap.ok();
     }

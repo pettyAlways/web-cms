@@ -6,6 +6,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class CmsRealm extends AuthorizingRealm {
 
     @Autowired
+    @Lazy
     private UserBiz userBiz;
 
     /**

@@ -29,9 +29,12 @@ public class ResourceBiz {
 
     @Autowired
     private PermissionRepository permissionRepository;
+
     private QResourceEntity qResourceEntity = QResourceEntity.resourceEntity;
+
     @Autowired
     private RoleResourceRepository roleResourceRepository;
+
     /**
      * 缓存管理类
      */
@@ -69,8 +72,8 @@ public class ResourceBiz {
     }
 
 
-    public void getChildrenList(Node parentNode, List<ResourceEntity> allNode) {
-        List<ResourceEntity> allNodeList = Optional.ofNullable(allNode).orElse(Collections.EMPTY_LIST);
+    private void getChildrenList(Node parentNode, List<ResourceEntity> allNode) {
+        List<ResourceEntity> allNodeList = Optional.ofNullable(allNode).orElse(new ArrayList<>());
         List<Node> childrenNodeList = allNodeList.stream()
                 .filter(node -> parentNode.getId().equals(node.getParentId()))
                 .map(node -> {
@@ -90,8 +93,8 @@ public class ResourceBiz {
         parentNode.setChildren(childrenNodeList);
 
         // 孩子列表获取出来可能是空，因此需要用Optional处理
-        Optional.ofNullable(childrenNodeList).orElse(Collections.EMPTY_LIST)
-                .forEach(node -> getChildrenList((Node) node, allNode));
+        Optional.ofNullable(childrenNodeList).orElse(new ArrayList<>())
+                .forEach(node -> getChildrenList(node, allNode));
 
     }
 

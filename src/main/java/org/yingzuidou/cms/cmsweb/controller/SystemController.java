@@ -4,13 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
-import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
-import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
-import org.yingzuidou.cms.cmsweb.service.ConstService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,8 +24,8 @@ import java.util.Map;
 @RequestMapping(value="/system")
 public class SystemController {
 
-    @Autowired
-    private CmsCacheManager cmsCacheManager;
+   @Autowired
+   private CmsCacheManager cmsCacheManager;
 
     /**
      * 获取系统标题常量

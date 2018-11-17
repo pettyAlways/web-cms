@@ -7,15 +7,10 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
 import org.yingzuidou.cms.cmsweb.core.shiro.CmsRealm;
 import org.yingzuidou.cms.cmsweb.core.shiro.CustomFormAuthenticationFilter;
 import org.yingzuidou.cms.cmsweb.core.shiro.CustomRolesAuthorizationFilter;
@@ -25,17 +20,22 @@ import javax.servlet.Filter;
 import java.util.Map;
 
 /**
- * 配置属性类
+ * 类功能描述
+ * Shiro相关的配置bean,比如自定义的CmsRealm实现登录认证
+ * 使用HashedCredentialsMatcher进行不可逆的带盐MD5加密
+ * 需要注意Shiro的实例化必须比其他涉及到代理的类早，所以如果
+ * 在Shiro创建前涉及的依赖注入都需要加一个@Lazy
  *
  * @author 鹰嘴豆
- * @date 2018/10/14     
+ * @date 2018/10/14
+ *
+ * 时间           作者          版本        描述
+ * ====================================================
+ * 2018/10/14     鹰嘴豆        v1.0        Shiro相关的配置Bean
  */
 
 @Configuration
-public class CmsConfiguration{
-
-    @Autowired
-    private ResourceBiz resourceBiz;
+public class ShiroConfiguration {
 
     @Value("${skip.login.url}")
     private String skipPath;
@@ -53,7 +53,13 @@ public class CmsConfiguration{
         extraFilter.put("roles", new CustomRolesAuthorizationFilter());
         extraFilter.put("authc", new CustomFormAuthenticationFilter());
         shiroFilterFactoryBean.setFilters(extraFilter);
-        // 加载拦截资源
+        /*
+            加载拦截资源,这里shiro实例比shiroService早，所以shiroService以及其所有
+            依赖注入的属性所涉及AOP的功能全部消失，如事务和缓存，有些解决方案说
+            增加@Lazy,在shiroService的ResourceBiz前面增加@Lazy也是不管用，因为这里
+            调用loadFilterChainDefinitions，在这个方法里面要使用ResourceBiz对象
+            就立马创建对象，还是比shiro实例化早，因此@Lazy还是不管用
+         */
         shiroFilterFactoryBean.setFilterChainDefinitionMap(shiroService.loadFilterChainDefinitions());
         return shiroFilterFactoryBean;
     }

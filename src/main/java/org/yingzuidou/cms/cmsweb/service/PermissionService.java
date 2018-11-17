@@ -3,7 +3,10 @@ package org.yingzuidou.cms.cmsweb.service;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
+import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+
+import java.util.List;
 
 /**
  * PermissionService
@@ -24,4 +27,5 @@ public interface PermissionService {
     void saveResource(ResourceEntity entity);
 
     Node acquireUserPermission(int userId);
+
 }
