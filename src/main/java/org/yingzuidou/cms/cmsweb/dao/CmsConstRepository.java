@@ -22,4 +22,12 @@ public interface CmsConstRepository extends PagingAndSortingRepository<CmsConstE
     void deleteAllByIdIn(List<Integer> ids);
 
     List<CmsConstEntity> findAllByType(String type);
+
+    /**
+     * 根据键值去找常量
+     *
+     * @param constKey 键值
+     * @return 常量对象
+     */
+    CmsConstEntity findByConstKey(String constKey);
 }

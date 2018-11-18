@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.ConstBiz;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
@@ -17,11 +19,9 @@ import org.yingzuidou.cms.cmsweb.dto.ConstDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.service.ConstService;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 类功能描述
@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  * ====================================================
  */
 @Service
+@Transactional
 public class ConstServiceImpl implements ConstService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -59,7 +60,10 @@ public class ConstServiceImpl implements ConstService {
      * @param cmsConstEntity 常量内容
      */
     @Override
-    @CacheEvict(value="constCache", key="'const_key_1'")
+    @Caching(evict = {
+            @CacheEvict(value="resourceCache", key="'resourceTree'",
+                    condition="#cmsConstEntity.type.equals('1')&&#cmsConstEntity.constKey.equals('root_resource')"),
+            @CacheEvict(value="constCache", key="'const_key_'+#cmsConstEntity.type") })
     public void save(CmsConstEntity cmsConstEntity) {
         cmsConstEntity.setCreator(CmsCommonUtil.getCurrentLoginUserId());
         cmsConstEntity.setCreateTime(new Date());
@@ -70,11 +74,16 @@ public class ConstServiceImpl implements ConstService {
      * 更新一个常量，需要根据主键获取实例在保存
      * 每次更新时需要更新缓存中的系统常量，因此这里移除constCache的
      * key为const_key_1表示系统常量的缓存
+     * springEL需要加上#表示对象的引用，如果是常量是平台的根目录则需要清空resourceTree
+     * 的缓存
      *
      * @param cmsConstEntity 常量内容
      */
     @Override
-    @CacheEvict(value="constCache", key="'const_key_1'")
+    @Caching(evict = {
+            @CacheEvict(value="resourceCache", key="'resourceTree'",
+                    condition="#cmsConstEntity.type.equals('1')&&#cmsConstEntity.constKey.equals('root_resource')"),
+            @CacheEvict(value="constCache", key="'const_key_'+#cmsConstEntity.type") })
     public void update(CmsConstEntity cmsConstEntity) {
         Optional<CmsConstEntity> constEntityOp = cmsConstRepository.findById(cmsConstEntity.getId());
         if (!constEntityOp.isPresent()) {
@@ -91,15 +100,19 @@ public class ConstServiceImpl implements ConstService {
      * 批量删除常量，硬删除不可恢复
      * 每次删除时需要更新缓存中的系统常量，因此这里移除constCache的
      * key为const_key_1表示系统常量的缓存
+     * springEL需要加上#表示对象的引用，如果是常量是平台的根目录则需要清空resourceTree
      *
      * @param ids 常量ID以逗号隔开
+     * @param type 常量类型为缓存做清空
+     * @param rootResourceId 常量键为root_resource的Id
      */
     @Override
-    @CacheEvict(value="constCache", key="'const_key_1'")
-    public void delete(String ids) {
-        List<Integer> idsList = Arrays.stream(ids.split(",")).map(Integer::valueOf)
-                .collect(Collectors.toList());
-        cmsConstRepository.deleteAllByIdIn(idsList);
+    @Caching(evict = {
+            @CacheEvict(value="resourceCache", key="'resourceTree'",
+                    condition="#type.equals('1')&&#ids.contains(#rootResourceId)"),
+            @CacheEvict(value="constCache", key="'const_key_'+#type") })
+    public void delete(List<Integer> ids, String type, Integer rootResourceId) {
+        cmsConstRepository.deleteAllByIdIn(ids);
     }
 
     /**
@@ -113,5 +126,10 @@ public class ConstServiceImpl implements ConstService {
     public List<CmsConstEntity> findAllConstByType(String type) {
         logger.info("缓存未命中");
         return cmsConstRepository.findAllByType(type);
+    }
+
+    @Override
+    public CmsConstEntity findRootResource(String rootResource) {
+        return cmsConstRepository.findByConstKey(rootResource);
     }
 }

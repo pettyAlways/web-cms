@@ -44,8 +44,18 @@ public interface ConstService {
      * 删除指定类型常量
      *
      * @param ids 常量ID以逗号隔开
+     * @param type 常量类型,用于缓存
+     * @param rootResourceId 资源管理树根资源Id，用于缓存
      */
-    void delete(String ids);
+    void delete(List<Integer> ids, String type, Integer rootResourceId);
 
     List<CmsConstEntity> findAllConstByType(String type);
+
+    /**
+     * 查询用于资源管理根资源的常量
+     *
+     * @param rootResource 根资源的键名称
+     * @return 根资源
+     */
+    CmsConstEntity findRootResource(String rootResource);
 }
