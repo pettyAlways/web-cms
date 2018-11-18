@@ -37,10 +37,7 @@ public class SystemController {
         CmsMap<Map<String, String>> cMap = new CmsMap<>();
         // 获取所有的系统常量
         Map<String, String> systemParams = cmsCacheManager.systemConst();
-        // 返回网站标题
-        Map<String, String> result = new HashMap<>(10);
-        result.put("systemTitle", systemParams.get("system_title"));
-        cMap.success().setResult(result);
+        cMap.success().setResult(systemParams);
 
         return cMap;
     }
