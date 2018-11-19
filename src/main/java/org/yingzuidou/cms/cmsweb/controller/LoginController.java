@@ -8,7 +8,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
@@ -25,6 +27,9 @@ public class LoginController {
 
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private CmsCacheManager cmsCacheManager;
 
     @PostMapping("/login.do")
     public CmsMap login(@RequestBody UserDTO userDTO) {
@@ -45,8 +50,16 @@ public class LoginController {
                 .setResult(user);
     }
 
+    /**
+     * 退出登录清空Shiro缓存以及当前用户授权的资源缓存
+     * 系统在用户登录的时候缓存用户授权的资源
+     *
+     * @return 请求状态
+     */
     @PostMapping("/logout.do")
     public CmsMap logout() {
+        String cacheKey = "resourceTree_" + CmsCommonUtil.getCurrentLoginUserId();
+        cmsCacheManager.clearCacheByKeys("resourceCache", cacheKey);
         SecurityUtils.getSubject().logout();
         return CmsMap.ok();
     }
