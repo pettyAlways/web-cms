@@ -1,6 +1,8 @@
 package org.yingzuidou.cms.cmsweb.core.cache;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
@@ -42,4 +44,18 @@ public class CmsCacheManager {
         return systemParams;
     }
 
+    /**
+     * 清除指定缓存中的键内容
+     *
+     * @param cacheName 缓存名字
+     * @param cacheKey 缓存键
+     */
+    public void clearCacheByKeys(String cacheName, String cacheKey) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache.isKeyInCache(cacheKey)) {
+            cache.remove(cacheKey);
+        }
+        List obj = cache.getKeys();
+        System.out.println(obj);
+    }
 }

@@ -6,13 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.RoleBiz;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
+import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.RoleDTO;
 import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
+import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 
@@ -34,6 +37,12 @@ public class RoleServiceImpl implements RoleService{
 
     @Autowired
     private RoleResourceRepository roleResourceRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private CmsCacheManager cmsCacheManager;
 
     @Autowired
     private RoleBiz roleBiz;
@@ -86,21 +95,32 @@ public class RoleServiceImpl implements RoleService{
 
     /**
      * 保存当前用户新的授权资源
+     * 先为每一个登录的用户都缓存各自授权的资源，每次更新授权以后都需要
+     * 根据当前修改的角色所关联的所有用户的id去清空授权资源的缓存
+     * 这需要重新定义一个缓存的注解，使用AOP织入增强（以后再优化先用缓存工具类）
      *
      * @param roleDTO 新授权资源
      */
     @Override
-    @CacheEvict(value="resourceCache", key="'resourceTree_'+#userId")
-    public void resourceAuth(RoleDTO roleDTO, Integer userId) {
+    public void resourceAuth(RoleDTO roleDTO) {
+        // 删除原先的角色用户关联数据在重新插入
         roleResourceRepository.deleteAllByRoleIdIs(roleDTO.getId());
         roleDTO.getResources().forEach(item -> {
             RoleResourceEntity roleResourceEntity = new RoleResourceEntity();
             roleResourceEntity.setRoleId(roleDTO.getId());
             roleResourceEntity.setResourceId(item);
             roleResourceEntity.setCreateTime(new Date());
-            roleResourceEntity.setCreator(userId);
+            roleResourceEntity.setCreator(CmsCommonUtil.getCurrentLoginUserId());
             roleResourceRepository.save(roleResourceEntity);
         });
+
+        // 无力扩展缓存将编码清空缓存
+        List<UserRoleEntity> userRoleEntities = userRoleRepository
+                .findAllByRoleId(roleDTO.getId());
+        Optional.ofNullable(userRoleEntities).orElse(new ArrayList<>()).stream()
+                .map(UserRoleEntity::getUserId)
+                .forEach(item -> cmsCacheManager
+                        .clearCacheByKeys("resourceCache", "resourceTree_" + item));
     }
 
     @Override

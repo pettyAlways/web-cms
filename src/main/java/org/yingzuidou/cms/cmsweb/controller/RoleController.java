@@ -76,7 +76,7 @@ public class RoleController {
      */
     @PostMapping("/resourceAuth.do")
     public CmsMap resourceAuth(@RequestBody RoleDTO roleDTO) {
-        roleService.resourceAuth(roleDTO, CmsCommonUtil.getCurrentLoginUserId());
+        roleService.resourceAuth(roleDTO);
         shiroService.updatePermission(shiroFilterFactoryBean);
         return CmsMap.ok();
     }
