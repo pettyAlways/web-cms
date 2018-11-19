@@ -18,6 +18,13 @@ public interface RoleResourceRepository extends PagingAndSortingRepository<RoleR
 
     void deleteAllByRoleIdIs(Integer roleId);
 
+    /**
+     * 根据资源id列表删除数据
+     *
+     * @param resourceIds 要删除的资源列表
+     */
+    void deleteAllByResourceIdIn(List<Integer> resourceIds);
+
     List<RoleResourceEntity> findAllByRoleIdIs(Integer roleId);
 
     List<RoleResourceEntity> findAllByRoleIdIn(List<Integer> roleIds);

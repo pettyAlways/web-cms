@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * PermissionController
+ * 资源管理
  *
  * @author shangguanls
  * @date 2018/9/26

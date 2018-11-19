@@ -63,14 +63,4 @@ public class LoginController {
         SecurityUtils.getSubject().logout();
         return CmsMap.ok();
     }
-
-    /**
-     * 未授权接口返回
-     *
-     * @return 403未授权状态码
-     */
-    @GetMapping("/unAuthor.do")
-    public CmsMap unAuthor() {
-        return CmsMap.error("403", "当前请求资源未授权");
-    }
 }

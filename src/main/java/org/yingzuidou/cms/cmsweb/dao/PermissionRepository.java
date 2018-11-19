@@ -16,5 +16,13 @@ public interface PermissionRepository extends PagingAndSortingRepository<Resourc
 
     List<ResourceEntity> findAllByIsDeleteIs(String isDelete);
 
+    /**
+     * 资源列表是否存在子资源
+     *
+     * @param resourceIds 资源列表
+     * @return 子资源
+     */
+    boolean existsByParentIdInAndIsDelete(List<Integer> resourceIds, String isDelete);
+
     List<ResourceEntity> findAllByIdInAndIsDeleteIs(List<Integer> ids, String isDelete);
 }

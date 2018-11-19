@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
+import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
@@ -16,7 +17,6 @@ import org.yingzuidou.cms.cmsweb.dao.PermissionRepository;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
 import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
-import org.yingzuidou.cms.cmsweb.entity.CmsConstEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
@@ -77,6 +77,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /**
      * 根据id删除指定的资源，同时清除resourceCache中key为resourceTree的缓存
+     * 删除资源同时需要删除角色资源关联的数据
      *
      * @param ids 待删除的id列表
      */
@@ -85,13 +86,27 @@ public class PermissionServiceImpl implements PermissionService {
     public void deletePower(String ids) {
         List<Integer> idsList = Arrays.stream(ids.split(",")).map(Integer::valueOf)
                 .collect(Collectors.toList());
+
+        // 删除前先校验是否存在子资源
+        if (checkBeforeDelete(idsList)) {
+            throw new BusinessException("请先删除子资源");
+        }
+        // 软删除资源
         List<ResourceEntity> resourceList = permissionRepository.findAllByIdInAndIsDeleteIs(idsList, "N");
+        // 删除时先检查是否存在子资源
         Optional.ofNullable(resourceList).orElse(Collections.emptyList()).forEach(item -> {
             item.setIsDelete("Y");
             item.setUpdator(CmsCommonUtil.getCurrentLoginUserId());
             item.setUpdateTime(new Date());
         });
         permissionRepository.saveAll(resourceList);
+
+        // 删除角色资源关联数据
+        roleResourceRepository.deleteAllByResourceIdIn(idsList);
+    }
+
+    private boolean checkBeforeDelete(List<Integer> idsList) {
+        return permissionRepository.existsByParentIdInAndIsDelete(idsList, "N");
     }
 
     /**
