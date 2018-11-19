@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.OrganizationBiz;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.OrganizationRepository;
 import org.yingzuidou.cms.cmsweb.dto.OrganizationDTO;
+import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.entity.OrganizationEntity;
 import org.yingzuidou.cms.cmsweb.service.OrganizationService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
@@ -67,7 +69,9 @@ public class OrganizationServiceImpl implements OrganizationService{
     public OrganizationDTO listTree() {
         // 先找出所有的扁平组织数据
         List<OrganizationEntity> flatNode = organizationRepository.findAllByIsDeleteIs("N");
-        OrganizationEntity parent = flatNode.stream().filter(node -> node.getParentId().intValue() == 0).findFirst().get();
+        CmsUserEntity userEntity = CmsCommonUtil.getCurrentLoginUser();
+        OrganizationEntity parent = flatNode.stream()
+                .filter(node -> userEntity.getUserDepart().equals(node.getId())).findFirst().get();
         OrganizationDTO parentDTO = new OrganizationDTO();
         parentDTO.setId(parent.getId());
         parentDTO.setLabel(parent.getOrgName());
@@ -102,7 +106,7 @@ public class OrganizationServiceImpl implements OrganizationService{
     }
 
     private void getChildrenList(OrganizationDTO parentNode, Optional<List<OrganizationEntity>> allNode) {
-        List<OrganizationEntity> allNodeList = allNode.orElse(Collections.EMPTY_LIST);
+        List<OrganizationEntity> allNodeList = allNode.orElse(new ArrayList<>());
         List<OrganizationDTO> childrenNodeList = allNodeList.stream()
                 .filter(node -> parentNode.getId().equals(node.getParentId()))
                 .map(node -> {
@@ -116,8 +120,7 @@ public class OrganizationServiceImpl implements OrganizationService{
         parentNode.setChildren(childrenNodeList);
 
         // 孩子列表获取出来可能是空，因此需要用Optional处理
-        Optional.ofNullable(childrenNodeList).orElse(Collections.EMPTY_LIST)
-                .forEach(node -> getChildrenList((OrganizationDTO) node, allNode));
-
+        Optional.ofNullable(childrenNodeList).orElse(new ArrayList<>())
+                .forEach(node -> getChildrenList(node, allNode));
     }
 }
