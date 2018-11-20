@@ -8,6 +8,8 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
+import org.yingzuidou.cms.cmsweb.constant.LockStatus;
+import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import java.util.Objects;
@@ -24,6 +26,10 @@ public class CmsRealm extends AuthorizingRealm {
     @Lazy
     private UserBiz userBiz;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private Integer ahour = 3600000;
     /**
      * 做登录认证，提供一个用户对象给AuthenticationInfo，subject.login自动做密码加密认证
      * 加密请参考这篇文章：https://www.cnblogs.com/wq3435/p/6260692.html
@@ -39,13 +45,24 @@ public class CmsRealm extends AuthorizingRealm {
         CmsUserEntity user = userBiz.findByUserAccount(userName);
         // 保存当前用户
         if (Objects.isNull(user)) {
-            throw new AuthenticationException("账号或者密码不正确");
+            throw new AuthenticationException("账号不存在");
+        }
+        // 用户禁用则抛出异常提示用户
+        if (LockStatus.INVAILD.getValue().equals(user.getUserStatus())) {
+            throw new AuthenticationException("用户已经被禁用，请联系管理员");
+            // 用户被锁定则判断是否已经过了一个小时，是则可以重新登录
+        } else if (LockStatus.LOCK.getValue().equals(user.getUserStatus())) {
+            if (System.currentTimeMillis() - user.getLockTime().getTime() < ahour) {
+                throw new AuthenticationException("用户已经被锁定一个小时");
+            }
+            // 恢复用户锁定的状态
+            user.setUserStatus(LockStatus.NORMAL.getValue());
+            userRepository.save(user);
         }
         /*
            返回AuthenticationInfo会在subject.login中做密码校验,
            这里使用HashedCredentialsMatcher做密码加密认证
            详细请看AuthenticatingRealm.assertCredentialsMatch方法
-
          */
         ByteSource credentialsSalt = ByteSource.Util.bytes(user.getUuid());
         return new SimpleAuthenticationInfo(user, user.getUserPassword(), credentialsSalt , getName());

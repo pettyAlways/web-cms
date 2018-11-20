@@ -1,13 +1,12 @@
 package org.yingzuidou.cms.cmsweb.service;
 
-import org.yingzuidou.cms.cmsweb.core.vo.Node;
-
 /**
  * LoginService
  *
- * @author shangguanls
+ * @author 鹰嘴豆
  * @date 2018/10/16
  */
 public interface LoginService {
 
+    void userLock(String userAccount);
 }

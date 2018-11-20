@@ -9,11 +9,20 @@
             timeToLiveSeconds="600"
             memoryStoreEvictionPolicy="LRU" />
 
-    <!-- 永久常驻内存 -->
+    <!-- 系统常用量 -->
     <cache
             name="constCache"
             eternal="true"
-            maxElementsInMemory="100"
+            maxElementsInMemory="1000"
+            overflowToDisk="false"
+            diskPersistent="false"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <!-- 登录次数限制 -->
+    <cache
+            name="LoginRetry"
+            eternal="true"
+            maxElementsInMemory="1000"
             overflowToDisk="false"
             diskPersistent="false"
             memoryStoreEvictionPolicy="LRU" />

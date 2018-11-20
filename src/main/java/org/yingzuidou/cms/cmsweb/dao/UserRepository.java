@@ -15,4 +15,7 @@ public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity
     CmsUserEntity findByUserAccountAndIsDeleteIs(String userAccount, String isDelete);
 
     CmsUserEntity findByUserAccountAndIdNotAndIsDelete(String userAccount, Integer id, String isDelete);
+
+    CmsUserEntity findByIdAndIsDelete(Integer id, String isDelete);
+
 }

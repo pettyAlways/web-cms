@@ -29,6 +29,8 @@ public class CmsUserEntity {
     private Date updateTime;
     private String isDelete;
     private String uuid;
+    private Date loginTime;
+    private Date lockTime;
 
     @Id
     @Column(name = "id")
@@ -179,6 +181,26 @@ public class CmsUserEntity {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Basic
+    @Column(name = "login_time")
+    public Date getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(Date loginTime) {
+        this.loginTime = loginTime;
+    }
+
+    @Basic
+    @Column(name = "lock_time")
+    public Date getLockTime() {
+        return lockTime;
+    }
+
+    public void setLockTime(Date lockTime) {
+        this.lockTime = lockTime;
     }
 
     @Override

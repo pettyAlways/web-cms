@@ -155,10 +155,10 @@ INSERT INTO `resource` VALUES (11, '功能服务', -1, 'module', '1', '', 'perso
 INSERT INTO `resource` VALUES (12, '简单功能', 11, 'menu', '1', NULL, 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y');
 INSERT INTO `resource` VALUES (13, '简单例子', 12, 'page', '1', '/service-config/hello-service', '角色管理', 1, 0, NOW(), 1, NULL, 'N', NULL, 'Y');
 INSERT INTO `resource` VALUES (14, '配置管理', 2, 'page', '1', '/sys-config/conf-manage', 'sys-manage', 5, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (15, '常量新增', 14, 'button', '1', '/const/save.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (16, '常量更新', 14, 'button', '1', '/const/edit.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (17, '常量查询', 14, 'button', '1', '/const/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (18, '常量删除', 14, 'button', '1', '/const/delete.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (15, '常量新增', 14, 'button', '1', '/constant/save.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (16, '常量更新', 14, 'button', '1', '/constant/edit.do', '', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (17, '常量查询', 14, 'button', '1', '/constant/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (18, '常量删除', 14, 'button', '1', '/constant/delete.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (19, '组织新增', 4, 'button', '1', '/organization/save.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (20, '组织更新', 4, 'button', '1', '/organization/edit.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (21, '组织删除', 4, 'button', '1', '/organization/delete.do', '', 2, 8, NOW(), NULL, NULL, 'N', NULL, 'N');

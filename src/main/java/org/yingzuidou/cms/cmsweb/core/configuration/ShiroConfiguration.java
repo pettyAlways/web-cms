@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.yingzuidou.cms.cmsweb.core.shiro.CmsRealm;
-import org.yingzuidou.cms.cmsweb.core.shiro.CustomFormAuthenticationFilter;
-import org.yingzuidou.cms.cmsweb.core.shiro.CustomRolesAuthorizationFilter;
-import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
+import org.yingzuidou.cms.cmsweb.core.shiro.*;
 
 import javax.servlet.Filter;
 import java.util.Map;
@@ -107,7 +104,7 @@ public class ShiroConfiguration {
      */
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
+        HashedCredentialsMatcher matcher = new RetryLimitHashedCredentialsMatcher();
         // 加密算法的名称
         matcher.setHashAlgorithmName("MD5");
         // 配置加密的次数

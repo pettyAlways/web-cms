@@ -2,6 +2,7 @@ package org.yingzuidou.cms.cmsweb.controller;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -37,13 +38,18 @@ public class LoginController {
         if ( !subject.isAuthenticated() ) {
             UsernamePasswordToken token = new UsernamePasswordToken(userDTO.getUserAccount(), userDTO.getUserPassword());
             try {
+                // subject.login中会执行密码认证
                 subject.login( token );
+            } catch (ExcessiveAttemptsException excessiveEx) {
+                loginService.userLock(userDTO.getUserAccount());
+                throw new BusinessException("用户被锁定");
             } catch (IncorrectCredentialsException iException) {
                 throw new BusinessException("账号或者密码不正确");
             } catch ( AuthenticationException authException ) {
                 throw new BusinessException(authException.getMessage());
             }
         }
+
         CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
         return CmsMap.<CmsUserEntity>ok()
                 .appendData("token", subject.getSession().getId())
