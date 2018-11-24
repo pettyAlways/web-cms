@@ -5,16 +5,27 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
+import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 登录控制类
@@ -30,6 +41,9 @@ public class LoginController {
     private LoginService loginService;
 
     @Autowired
+    private ShiroService shiroService;
+
+    @Autowired
     private CmsCacheManager cmsCacheManager;
 
     @PostMapping("/login.do")
@@ -40,6 +54,8 @@ public class LoginController {
             try {
                 // subject.login中会执行密码认证
                 subject.login( token );
+                // 账号在其它地方登录将踢出它在上一个登录的session
+                shiroService.kickoutUser(subject);
             } catch (ExcessiveAttemptsException excessiveEx) {
                 loginService.userLock(userDTO.getUserAccount());
                 throw new BusinessException("用户被锁定");
@@ -50,8 +66,8 @@ public class LoginController {
             }
         }
 
-        CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
-        return CmsMap.<CmsUserEntity>ok()
+        CmsUserEntity user = (CmsUserEntity) subject.getPrincipal();
+        return CmsMap.ok()
                 .appendData("token", subject.getSession().getId())
                 .setResult(user);
     }

@@ -1,13 +1,19 @@
 package org.yingzuidou.cms.cmsweb.core.shiro;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
+import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import java.util.*;
 
@@ -82,5 +88,33 @@ public class ShiroServiceImpl implements ShiroService {
                 manager.createChain(url, chainDefinition);
             }
         }
+    }
+
+    /**
+     * 同一个账户只能在一个地方
+     * 需要用WebSocket通知前端用户
+     *
+     * @param subject  可以获取用户的对象
+     */
+    @Override
+    public void kickOutUser(Subject subject) {
+        // 获取当前已登录的用户session列表
+        DefaultWebSecurityManager securityManager = (DefaultWebSecurityManager) SecurityUtils.getSecurityManager();
+        DefaultWebSessionManager sessionManager = (DefaultWebSessionManager)securityManager.getSessionManager();
+        Collection<Session> sessions = sessionManager.getSessionDAO().getActiveSessions();
+        CmsUserEntity curLoginUser = (CmsUserEntity) subject.getPrincipal();
+        // 停止拥有相同的用户的不同session
+        Optional.ofNullable(sessions).orElse(new ArrayList<>()).forEach(session -> {
+            Subject sessionSubject = new Subject.Builder().session(session).buildSubject();
+            if (sessionSubject.isAuthenticated()) {
+                CmsUserEntity user = (CmsUserEntity) sessionSubject.getPrincipal();
+                if (user.getId() == curLoginUser.getId()) {
+                    // 防止误杀当前已经登录的session
+                    if (!session.getId().equals(subject.getSession().getId())) {
+                        session.stop();
+                    }
+                }
+            }
+        });
     }
 }
