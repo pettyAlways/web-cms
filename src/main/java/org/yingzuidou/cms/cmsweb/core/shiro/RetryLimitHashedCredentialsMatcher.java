@@ -7,6 +7,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
@@ -25,7 +26,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher {
 
+    /**
+     * 这里注入导致CmsCacheManager中的ConstService过早创建，让这个ConstService中的AOP失效
+     * 加个@lazy可以解决
+     */
     @Autowired
+    @Lazy
     private CmsCacheManager cmsCacheManager;
 
     @Override

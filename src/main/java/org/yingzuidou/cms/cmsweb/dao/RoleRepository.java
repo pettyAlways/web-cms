@@ -17,6 +17,6 @@ public interface RoleRepository extends PagingAndSortingRepository<RoleEntity, I
 
     List<RoleEntity> findAllByIdInAndIsDeleteIs(List<Integer> idsList, String isDelete);
 
-    List<RoleEntity> findAllByIsDeleteIs(String isDelete);
+    List<RoleEntity> findAllByInUseAndIsDeleteIs(String inUse, String isDelete);
 
 }

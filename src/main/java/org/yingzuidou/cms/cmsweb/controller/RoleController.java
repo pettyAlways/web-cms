@@ -2,8 +2,10 @@ package org.yingzuidou.cms.cmsweb.controller;
 
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
@@ -12,9 +14,12 @@ import org.yingzuidou.cms.cmsweb.entity.RoleEntity;
 import org.yingzuidou.cms.cmsweb.service.RoleService;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 角色管理相关接口
+ * 角色如果启用和禁用互相转化那么需要重新加载shiro的资源授权
+ * 因为角色变化会影响用户的当前授权资源所以需要清空相关用户缓存
  *
  * @author 鹰嘴豆
  * @date 2018/10/1
@@ -30,6 +35,9 @@ public class RoleController {
     private ShiroService shiroService;
 
     @Autowired
+    private CmsCacheManager cmsCacheManager;
+
+    @Autowired
     private ShiroFilterFactoryBean shiroFilterFactoryBean;
 
     @GetMapping("/list.do")
@@ -42,10 +50,8 @@ public class RoleController {
 
     @GetMapping("/listAll.do")
     public CmsMap listAll() {
-        CmsMap<List<RoleEntity>> result = new CmsMap<>();
         RoleDTO roleDTO = roleService.listAll();
-        result.success().setResult(roleDTO.getRoles());
-        return result;
+        return CmsMap.ok().setResult(roleDTO.getRoles());
     }
 
     @PostMapping("/save.do")
@@ -54,9 +60,27 @@ public class RoleController {
         return CmsMap.ok();
     }
 
+    /**
+     * 更新角色信息
+     * 如果角色启用禁用发生变化那么需要重新加载shiro授权信息
+     * 因为角色变化会影响用户的当前授权资源所以需要清空相关用户缓存
+     *
+     * @param roleEntity 角色信息
+     * @return 请求状态
+     */
     @PutMapping("/edit.do")
     public CmsMap edit(@RequestBody RoleEntity roleEntity) {
-        roleService.edit(roleEntity);
+        boolean reload = roleService.edit(roleEntity);
+        // 转换启用状态时重新进行资源授权
+        if (reload) {
+            shiroService.updatePermission(shiroFilterFactoryBean);
+        }
+        // 清空当前角色的所有用户的缓存
+        List<Integer> userIds = roleService.findUserIdsByRole(roleEntity.getId());
+        if (Objects.nonNull(userIds)) {
+            userIds.forEach(userId -> cmsCacheManager
+                    .clearCacheByKeys("resourceCache", "resourceTree_" + userId));
+        }
         return CmsMap.ok();
     }
 

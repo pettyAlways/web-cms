@@ -1,19 +1,20 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 
-import java.util.List;
-
 /**
- * OrganizationController 组织机构
+ * 用户管理控制器
+ * 如果用户重新授予角色那么需要重新加载shiro的资源授权
  *
- * @author yingzuidou
+ * @author 鹰嘴豆
  * @date 2018/9/13
  */
 
@@ -23,9 +24,16 @@ public class UserController {
 
     private final UserService userService;
 
+    private final ShiroService shiroService;
+
+    private ShiroFilterFactoryBean shiroFilterFactoryBean;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ShiroService shiroService,
+                          ShiroFilterFactoryBean shiroFilterFactoryBean) {
         this.userService = userService;
+        this.shiroService = shiroService;
+        this.shiroFilterFactoryBean = shiroFilterFactoryBean;
     }
 
     @GetMapping(value="/list.do")
@@ -62,16 +70,22 @@ public class UserController {
         return cmsMap.success().setResult(userDTO);
     }
 
+    /**
+     * 给角色授予角色并且重新加载shiro的授权资源
+     *
+     * @param userDTO 用户授角信息
+     * @return 请求状态
+     */
     @PostMapping("/authUser.do")
     public CmsMap authUser(@RequestBody UserDTO userDTO) {
         userService.authUser(userDTO);
+        shiroService.updatePermission(shiroFilterFactoryBean);
         return CmsMap.ok();
     }
 
     @GetMapping("/acquireRoles.do")
     public CmsMap acquireRoles(Integer id) {
-        CmsMap<List<Integer>> cMap = new CmsMap<>();
         UserDTO userDTO = userService.acquireRoles(id);
-        return cMap.success().setResult(userDTO.getRoles());
+        return CmsMap.ok().setResult(userDTO.getRoles());
     }
 }

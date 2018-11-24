@@ -8,7 +8,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
+import org.yingzuidou.cms.cmsweb.constant.InUseEnum;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
@@ -60,7 +62,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Cacheable(value="resourceCache", key="'resourceTree'")
     public PermissionDTO listPower() {
         List<ResourceEntity> flatNode = permissionRepository.findAllByIsDeleteIs("N");
-        Node root = resouceBiz.acquirePermissions(flatNode);
+        Node root = resouceBiz.acquirePermissions(flatNode, false);
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setTree(root);
         return permissionDTO;
@@ -154,18 +156,36 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     @Cacheable(value="resourceCache", key="'resourceTree_'+#userId")
     public Node acquireUserPermission(int userId) {
-        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(userId);
+        List<Object> roleIds = userRoleRepository.findAllByUserIdAndRoleInUse(userId);
         List<ResourceEntity> resourceEntities = null;
-        if (!Objects.isNull(userRoleEntities)) {
-            List<Integer> roleIds =  userRoleEntities.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
-            List<RoleResourceEntity> roleResourceEntities = roleResourceRepository.findAllByRoleIdIn(roleIds);
-            if (!Objects.isNull(roleResourceEntities)) {
-                List<Integer> resourceIds = roleResourceEntities.stream().map(RoleResourceEntity::getResourceId).collect(Collectors.toList());
-                if (!Objects.isNull(resourceIds)) {
+        if (Objects.nonNull(roleIds)) {
+            List<Integer> roleIdList = roleIds.stream()
+                    .map(item -> Integer.parseInt(String.valueOf(item))).collect(Collectors.toList());
+            List<RoleResourceEntity> roleResourceEntities = roleResourceRepository.findAllByRoleIdIn(roleIdList);
+            if (Objects.nonNull(roleResourceEntities)) {
+                List<Integer> resourceIds = roleResourceEntities.parallelStream()
+                        .map(RoleResourceEntity::getResourceId).distinct().collect(Collectors.toList());
+                if (Objects.nonNull(resourceIds)) {
                     resourceEntities = permissionRepository.findAllByIdInAndIsDeleteIs(resourceIds, "N");
                 }
             }
         }
-        return resouceBiz.acquirePermissions(resourceEntities);
+        return resouceBiz.acquirePermissions(resourceEntities, true);
+    }
+
+    @Override
+    public List<Integer> findUserIdsByResource(int id) {
+        // 当前变更资源影响到的所有角色
+        Optional<List<RoleResourceEntity>> roleResourceEntities = roleResourceRepository.findAllByResourceId(id);
+        List<Integer> roleIds = roleResourceEntities.orElse(new ArrayList<>()).stream()
+                .map(RoleResourceEntity::getRoleId).collect(Collectors.toList());
+        if (Objects.nonNull(roleIds)) {
+            List<Object> userIds = userRoleRepository.findAllByRoleIdAndRoleInUse(roleIds);
+            // 转换去重
+            List<Integer> iUserIds = Optional.ofNullable(userIds).orElse(new ArrayList<>()).stream()
+                    .map(item -> Integer.parseInt(String.valueOf(item))).distinct().collect(Collectors.toList());
+            return iUserIds;
+        }
+        return new ArrayList<>();
     }
 }

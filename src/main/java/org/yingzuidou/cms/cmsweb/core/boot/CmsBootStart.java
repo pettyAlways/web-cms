@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.core.boot;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -39,10 +40,11 @@ public class CmsBootStart implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         // 获取系统常量列表
-        List<CmsConstEntity> constList = constService.findAllConstByType("1");
-        System.out.println("加载好系统常量：" + constList);
+        constService.findAllConstByType("1");
         // 获取枚举常量
-        List<CmsConstEntity> enumList = constService.findAllConstByType("2");
-        System.out.println("加载好枚举常量：" + enumList);
+        constService.findAllConstByType("2");
+        Cache cache = cacheManager.getCache("shiroCache");
+        List keys = cache.getKeys();
+        System.out.println(keys);
     }
 }

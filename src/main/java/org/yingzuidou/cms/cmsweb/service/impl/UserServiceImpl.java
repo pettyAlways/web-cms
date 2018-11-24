@@ -2,6 +2,8 @@ package org.yingzuidou.cms.cmsweb.service.impl;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,7 +115,14 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
+    /**
+     * 为指定用户授予角色，一个用户可以多角色
+     * 给用户重新指定角色时需要清除指定用户的授权资源缓存
+     *
+     * @param userDTO 用户ID和角色ID列表
+     */
     @Override
+    @CacheEvict(value="resourceCache", key="'resourceTree_'+#userDTO.id")
     public void authUser(UserDTO userDTO) {
         userRoleRepository.deleteAllByUserId(userDTO.getId());
         List<UserRoleEntity> userRoleList = userDTO.getRoles().stream().map(item -> {
@@ -127,12 +136,20 @@ public class UserServiceImpl implements UserService {
         userRoleRepository.saveAll(userRoleList);
     }
 
+    /**
+     * 获取指定给用户的所有启用的角色
+     * 如果没有启用的角色将被过滤
+     *
+     * @param id 用户ID
+     * @return 赋予用户的角色ID列表
+     */
     @Override
     public UserDTO acquireRoles(Integer id) {
         UserDTO userDTO = new UserDTO();
-        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(id);
-        List<Integer> roleIds = userRoleEntities.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
-        userDTO.setRoles(roleIds);
+        List<Object> roleIds = userRoleRepository.findAllByUserIdAndRoleInUse(id);
+        List<Integer> roleIdList = roleIds.stream()
+                .map(item -> Integer.parseInt(String.valueOf(item))).collect(Collectors.toList());
+        userDTO.setRoles(roleIdList);
         return userDTO;
     }
 }

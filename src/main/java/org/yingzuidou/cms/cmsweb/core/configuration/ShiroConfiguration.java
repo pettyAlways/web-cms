@@ -1,16 +1,23 @@
 package org.yingzuidou.cms.cmsweb.core.configuration;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.shiro.*;
 
 import javax.servlet.Filter;
@@ -36,6 +43,9 @@ public class ShiroConfiguration {
 
     @Value("${skip.login.url}")
     private String skipPath;
+
+    @Autowired
+    private CmsCacheManager cmsCacheManager;
 
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager, ShiroService shiroService) {
@@ -65,20 +75,55 @@ public class ShiroConfiguration {
      * 注入 securityManager
      */
     @Bean
-    public SecurityManager securityManager() {
+    public SecurityManager securityManager(CacheManager cacheManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSessionManager(sessionManager());
         securityManager.setRealm(cmsRealm());
+        // 只要在SecurityManager指定就能应用到它依赖的子组件中
+        securityManager.setCacheManager(ehCacheManager(cacheManager));
         return securityManager;
     }
 
+    /**
+     * shiro管理的ehcache缓存
+     *
+     * @return cacheManage元数据
+     */
     @Bean
-    public DefaultWebSessionManager sessionManager() {
+    public EhCacheManager ehCacheManager(CacheManager cacheManager){
+        EhCacheManager ehCacheManager = new EhCacheManager();
+        ehCacheManager.setCacheManager(cacheManager);
+        return ehCacheManager;
+    }
+
+    @Bean
+    public SessionDAO sessionDAO() {
+        EnterpriseCacheSessionDAO enterpriseCacheSessionDAO = new EnterpriseCacheSessionDAO();
+        //设置ehcache配置文件中的session缓存的名字
+        enterpriseCacheSessionDAO.setActiveSessionsCacheName("shiroCache");
+        return enterpriseCacheSessionDAO;
+    }
+
+    @Bean
+    public SessionManager sessionManager() {
         DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
-        defaultWebSessionManager.setGlobalSessionTimeout(6000000);
+        defaultWebSessionManager.setSessionDAO(sessionDAO());
+        //全局会话超时时间（单位毫秒），默认30分钟  暂时设置为10秒钟 用来测试
+        defaultWebSessionManager.setGlobalSessionTimeout(1800000);
+        //是否开启删除无效的session对象  默认为true
         defaultWebSessionManager.setDeleteInvalidSessions(true);
+        //是否开启定时调度器进行检测过期session 默认为true
+        defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
+        //设置session失效的扫描时间, 清理用户直接关闭浏览器造成的孤立会话 默认为 1个小时
+        //设置该属性 就不需要设置 ExecutorServiceSessionValidationScheduler 底层也是默认自动调用ExecutorServiceSessionValidationScheduler
+        //暂时设置为 5秒 用来测试
+        defaultWebSessionManager.setSessionValidationInterval(3600000);
+        //取消url 后面的 JSESSIONID
+        defaultWebSessionManager.setSessionIdUrlRewritingEnabled(false);
         return defaultWebSessionManager;
     }
+
+
     /**
      * 自定义身份认证 realm,指定密码加密的credentialsMetcher
      * <p>

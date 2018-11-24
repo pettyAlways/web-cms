@@ -8,7 +8,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.yingzuidou.cms.cmsweb.biz.UserBiz;
-import org.yingzuidou.cms.cmsweb.constant.LockStatus;
+import org.yingzuidou.cms.cmsweb.constant.LockStatusEnum;
 import org.yingzuidou.cms.cmsweb.dao.UserRepository;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
@@ -48,15 +48,15 @@ public class CmsRealm extends AuthorizingRealm {
             throw new AuthenticationException("账号不存在");
         }
         // 用户禁用则抛出异常提示用户
-        if (LockStatus.INVAILD.getValue().equals(user.getUserStatus())) {
+        if (LockStatusEnum.INVAILD.getValue().equals(user.getUserStatus())) {
             throw new AuthenticationException("用户已经被禁用，请联系管理员");
             // 用户被锁定则判断是否已经过了一个小时，是则可以重新登录
-        } else if (LockStatus.LOCK.getValue().equals(user.getUserStatus())) {
+        } else if (LockStatusEnum.LOCK.getValue().equals(user.getUserStatus())) {
             if (System.currentTimeMillis() - user.getLockTime().getTime() < ahour) {
                 throw new AuthenticationException("用户已经被锁定一个小时");
             }
             // 恢复用户锁定的状态
-            user.setUserStatus(LockStatus.NORMAL.getValue());
+            user.setUserStatus(LockStatusEnum.NORMAL.getValue());
             userRepository.save(user);
         }
         /*

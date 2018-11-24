@@ -3,6 +3,7 @@ package org.yingzuidou.cms.cmsweb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
+import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
@@ -10,12 +11,14 @@ import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * PermissionController
  * 资源管理
- *
- * @author shangguanls
+ * 资源如果不被启用那么只需要简单不查询资源就可以，没有必要重新加载shiro的资源授权
+ * 父资源隐藏那么子资源也会被隐藏
+ * @author 鹰嘴豆
  * @date 2018/9/26
  */
 @RestController
@@ -24,9 +27,12 @@ public class PermissionController {
 
     private final PermissionService permissionService;
 
+    private final CmsCacheManager cmsCacheManager;
+
     @Autowired
-    public PermissionController(PermissionService permissionService) {
+    public PermissionController(PermissionService permissionService, CmsCacheManager cmsCacheManager) {
         this.permissionService = permissionService;
+        this.cmsCacheManager = cmsCacheManager;
     }
 
     @GetMapping(value="/listPower.do")
@@ -69,6 +75,12 @@ public class PermissionController {
     @PutMapping(value="/updatePower.do")
     public CmsMap updatePower(@RequestBody ResourceEntity entity) {
         permissionService.updateResouce(entity);
+        // 更改资源需要清空对应用户的缓存
+        List<Integer> userIds = permissionService.findUserIdsByResource(entity.getId());
+        if (Objects.nonNull(userIds)) {
+            userIds.forEach(userId -> cmsCacheManager
+                    .clearCacheByKeys("resourceCache", "resourceTree_" + userId));
+        }
         return CmsMap.ok();
     }
 

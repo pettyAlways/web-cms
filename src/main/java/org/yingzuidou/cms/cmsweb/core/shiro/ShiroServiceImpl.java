@@ -69,10 +69,11 @@ public class ShiroServiceImpl implements ShiroService {
 
             // 清空老的权限控制
             manager.getFilterChains().clear();
-
+            // 清空授权资源路径的权限配置Map
             shiroFilterFactoryBean.getFilterChainDefinitionMap().clear();
+            // 重新加载授权资源
             shiroFilterFactoryBean.setFilterChainDefinitionMap(loadFilterChainDefinitions());
-            // 重新构建生成
+            // 重新构建生成各个拦截器对应的资源路径
             Map<String, String> chains = shiroFilterFactoryBean.getFilterChainDefinitionMap();
             for (Map.Entry<String, String> entry : chains.entrySet()) {
                 String url = entry.getKey();

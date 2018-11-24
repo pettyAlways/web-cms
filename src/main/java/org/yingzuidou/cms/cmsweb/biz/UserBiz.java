@@ -73,13 +73,14 @@ public class UserBiz {
     }
 
     public List<String> findRoleNameByUserId(Integer userId) {
-        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByUserId(userId);
+        List<Object> roleIds = userRoleRepository.findAllByUserIdAndRoleInUse(userId);
         List<String> roleNames = null;
-        if (!Objects.isNull(userRoleEntities)) {
-            List<Integer> roleIds = userRoleEntities.stream().map(item -> item.getRoleId()).collect(Collectors.toList());
-            List<RoleEntity> roleEntities = roleRepository.findAllByIdInAndIsDeleteIs(roleIds, "N");
-            if (!Objects.isNull(roleEntities)) {
-                roleNames = roleEntities.stream().map(role -> role.getRoleName()).collect(Collectors.toList());
+        if (Objects.nonNull(roleIds)) {
+            List<Integer> roleIdList = roleIds.stream()
+                    .map(item -> Integer.parseInt(String.valueOf(item))).collect(Collectors.toList());
+            List<RoleEntity> roleEntities = roleRepository.findAllByIdInAndIsDeleteIs(roleIdList, "N");
+            if (Objects.nonNull(roleEntities)) {
+                roleNames = roleEntities.stream().map(RoleEntity::getRoleName).collect(Collectors.toList());
             }
         }
         return roleNames;

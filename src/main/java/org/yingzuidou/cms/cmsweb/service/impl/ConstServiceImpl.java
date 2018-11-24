@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.ConstBiz;
+import org.yingzuidou.cms.cmsweb.constant.InUseEnum;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
@@ -117,6 +118,7 @@ public class ConstServiceImpl implements ConstService {
 
     /**
      * 获取指定类型的常量并以key为cache_key_1缓存在constCache中
+     * 查找所有启用的常量
      *
      * @param type 1、2等表示系统常量、枚举
      * @return 从缓存或者数据库获取到的常量列表
@@ -125,7 +127,7 @@ public class ConstServiceImpl implements ConstService {
     @Cacheable(value="constCache", key="'const_key_'+#type")
     public List<CmsConstEntity> findAllConstByType(String type) {
         logger.info("缓存未命中");
-        return cmsConstRepository.findAllByType(type);
+        return cmsConstRepository.findAllByTypeAndInUse(type, InUseEnum.USE.getValue());
     }
 
     @Override

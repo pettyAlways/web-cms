@@ -28,4 +28,11 @@ public interface PermissionService {
 
     Node acquireUserPermission(int userId);
 
+    /**
+     * 根据资源ID查找所有用户Id列表
+     *
+     * @param id 资源id
+     * @return 该资源ID关联的所有用户Id列表
+     */
+    List<Integer> findUserIdsByResource(int id);
 }

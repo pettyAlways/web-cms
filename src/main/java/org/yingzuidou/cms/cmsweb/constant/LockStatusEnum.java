@@ -10,7 +10,7 @@ package org.yingzuidou.cms.cmsweb.constant;
  * 时间           作者          版本        描述
  * ====================================================
  */
-public enum  LockStatus {
+public enum LockStatusEnum {
     // 账户正常状态
     NORMAL("正常", "1"),
 
@@ -23,19 +23,19 @@ public enum  LockStatus {
     /**
      * 用户状态
      */
-    private String name;
+    private String key;
 
     /**
      * 状态值
      */
-    private String status;
+    private String value;
 
-    private LockStatus(String name, String status) {
-        this.name = name;
-        this.status = status;
+    private LockStatusEnum(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
 
     public String getValue() {
-        return this.status;
+        return this.value;
     }
 }

@@ -1,13 +1,17 @@
 package org.yingzuidou.cms.cmsweb.service.impl;
 
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yingzuidou.cms.cmsweb.biz.RoleBiz;
+import org.yingzuidou.cms.cmsweb.constant.InUseEnum;
+import org.yingzuidou.cms.cmsweb.constant.IsDeleteEnum;
 import org.yingzuidou.cms.cmsweb.core.cache.CmsCacheManager;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
+import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dao.RoleRepository;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
@@ -45,6 +49,12 @@ public class RoleServiceImpl implements RoleService{
     private CmsCacheManager cmsCacheManager;
 
     @Autowired
+    private ShiroFilterFactoryBean shiroFilterFactoryBean;
+
+    @Autowired
+    private ShiroService shiroService;
+
+    @Autowired
     private RoleBiz roleBiz;
 
     @Override
@@ -62,14 +72,21 @@ public class RoleServiceImpl implements RoleService{
         roleRepository.save(roleEntity);
     }
 
+    /**
+     * 更新角色信息
+     * 如果角色启用和不启用互相转换时需要重新授权
+     *
+     * @param roleEntity 角色实体
+     * @return 是否更改是启用，如果是就需要重新加载shiro授权
+     */
     @Override
-    public void edit(RoleEntity roleEntity) {
+    public boolean edit(RoleEntity roleEntity) {
        RoleEntity entity = roleRepository.findById(roleEntity.getId()).get();
        CmsBeanUtils.copyMorNULLProperties(roleEntity, entity);
        entity.setUpdator(1);
        entity.setUpdateTime(new Date());
        roleRepository.save(entity);
-
+       return !roleEntity.getInUse().equals(entity.getInUse());
     }
 
     @Override
@@ -88,7 +105,8 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public RoleDTO listAll() {
         RoleDTO roleDTO = new RoleDTO();
-        List<RoleEntity> allRoles = roleRepository.findAllByIsDeleteIs("N");
+        List<RoleEntity> allRoles = roleRepository
+                .findAllByInUseAndIsDeleteIs(InUseEnum.USE.getValue(), IsDeleteEnum.NOTDELETE.getValue());
         roleDTO.setRoles(allRoles);
         return roleDTO;
     }
@@ -132,5 +150,13 @@ public class RoleServiceImpl implements RoleService{
             roleDTO.setResources(ids);
         }
         return roleDTO;
+    }
+
+    @Override
+    public List<Integer> findUserIdsByRole(int id) {
+        List<UserRoleEntity> userRoleEntities = userRoleRepository.findAllByRoleId(id);
+        List<Integer> userIds = Optional.ofNullable(userRoleEntities).orElse(new ArrayList<>()).stream()
+                .map(UserRoleEntity::getUserId).collect(Collectors.toList());
+        return userIds;
     }
 }
