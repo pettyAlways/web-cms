@@ -39,11 +39,17 @@ public class OrganizationServiceImpl implements OrganizationService{
 
     @Override
     public OrganizationDTO list(OrganizationDTO organizationDTO, PageInfo pageInfo) {
+        // 查找父级资源信息
         Optional<OrganizationEntity> curNode = organizationBiz.findOrgById(organizationDTO.getParentId());
+        // 查找父级下的子资源
         Page<OrganizationEntity> orgPage = organizationBiz.findAllSubOrganizationWithCondition(organizationDTO, pageInfo.toPageable());
-        organizationDTO.setId(curNode.get().getId());
-        organizationDTO.setLabel(curNode.get().getOrgName());
-        organizationDTO.setChildrenEntityList(orgPage.getContent());
+        if (curNode.isPresent()) {
+            OrganizationEntity organization = curNode.get();
+            organizationDTO.setId(organization.getId());
+            organizationDTO.setLabel(organization.getOrgName());
+            organizationDTO.setExpand(organization.getExpand());
+            organizationDTO.setChildrenEntityList(orgPage.getContent());
+        }
         pageInfo.setCounts(orgPage.getTotalElements());
         return organizationDTO;
     }
@@ -114,6 +120,7 @@ public class OrganizationServiceImpl implements OrganizationService{
                     OrganizationDTO curOrganizationDTO = new OrganizationDTO();
                     curOrganizationDTO.setId(node.getId());
                     curOrganizationDTO.setLabel(node.getOrgName());
+                    curOrganizationDTO.setExpand(node.getExpand());
                     return curOrganizationDTO;
                 })
                 .collect(Collectors.toList());
