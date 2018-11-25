@@ -40,9 +40,6 @@ public class CmsCacheManager {
         List<CmsConstEntity> constEntities = constService.findAllConstByType("1");
         Optional.ofNullable(constEntities).orElse(new ArrayList <>())
                 .forEach(item -> systemParams.put(item.getConstKey(), item.getConstValue()));
-        Cache cache = cacheManager.getCache("shiroCache");
-        List keys = cache.getKeys();
-        System.out.println(keys);
         return systemParams;
     }
 

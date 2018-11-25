@@ -12,9 +12,12 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.yingzuidou.cms.cmsweb.constant.WebSocketTypeEnum;
+import org.yingzuidou.cms.cmsweb.core.websocket.CmsWebSocket;
 import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -111,6 +114,12 @@ public class ShiroServiceImpl implements ShiroService {
                 if (user.getId() == curLoginUser.getId()) {
                     // 防止误杀当前已经登录的session
                     if (!session.getId().equals(subject.getSession().getId())) {
+                        Map<String, Object> msg = new HashMap<>(2);
+                        msg.put("type", WebSocketTypeEnum.KICKOUT.getValue());
+                        msg.put("msg", "账号在其他地方登陆");
+                        Optional.of(CmsWebSocket.connectSessions.entrySet()).orElse(new HashSet<>())
+                                .stream().filter(item -> item.getKey().equals(user.getId()))
+                                .forEach(item -> CmsWebSocket.sendMessage(msg, item.getValue()));
                         session.stop();
                     }
                 }

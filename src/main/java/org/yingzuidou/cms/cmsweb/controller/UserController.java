@@ -1,11 +1,13 @@
 package org.yingzuidou.cms.cmsweb.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.shiro.ShiroService;
+import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.UserService;
@@ -67,7 +69,8 @@ public class UserController {
     public CmsMap<UserDTO> userInfo() {
         CmsMap<UserDTO> cmsMap = new CmsMap<>();
         UserDTO userDTO = userService.userInfo();
-        return cmsMap.success().setResult(userDTO);
+        return cmsMap.success().appendData("currentUser", CmsCommonUtil.getCurrentLoginUser())
+                .setResult(userDTO);
     }
 
     /**

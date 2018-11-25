@@ -43,8 +43,5 @@ public class CmsBootStart implements ApplicationRunner {
         constService.findAllConstByType("1");
         // 获取枚举常量
         constService.findAllConstByType("2");
-        Cache cache = cacheManager.getCache("shiroCache");
-        List keys = cache.getKeys();
-        System.out.println(keys);
     }
 }

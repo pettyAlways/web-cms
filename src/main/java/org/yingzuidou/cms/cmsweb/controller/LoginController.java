@@ -21,6 +21,7 @@ import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
 import org.yingzuidou.cms.cmsweb.dto.UserDTO;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
+import org.yingzuidou.cms.cmsweb.service.UserService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +47,9 @@ public class LoginController {
     @Autowired
     private CmsCacheManager cmsCacheManager;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/login.do")
     public CmsMap login(@RequestBody UserDTO userDTO) {
         Subject subject = SecurityUtils.getSubject();
@@ -55,7 +59,7 @@ public class LoginController {
                 // subject.login中会执行密码认证
                 subject.login( token );
                 // 账号在其它地方登录将踢出它在上一个登录的session
-                shiroService.kickoutUser(subject);
+                shiroService.kickOutUser(subject);
             } catch (ExcessiveAttemptsException excessiveEx) {
                 loginService.userLock(userDTO.getUserAccount());
                 throw new BusinessException("用户被锁定");
@@ -65,11 +69,9 @@ public class LoginController {
                 throw new BusinessException(authException.getMessage());
             }
         }
-
-        CmsUserEntity user = (CmsUserEntity) subject.getPrincipal();
+        // 在登录的时候加载资源
         return CmsMap.ok()
-                .appendData("token", subject.getSession().getId())
-                .setResult(user);
+                .appendData("token", subject.getSession().getId());
     }
 
     /**

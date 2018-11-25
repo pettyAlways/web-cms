@@ -8,9 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.yingzuidou.cms.cmsweb.biz.ResourceBiz;
-import org.yingzuidou.cms.cmsweb.constant.InUseEnum;
 import org.yingzuidou.cms.cmsweb.core.exception.BusinessException;
 import org.yingzuidou.cms.cmsweb.core.paging.PageInfo;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsCommonUtil;
@@ -21,7 +19,6 @@ import org.yingzuidou.cms.cmsweb.dao.UserRoleRepository;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.RoleResourceEntity;
-import org.yingzuidou.cms.cmsweb.entity.UserRoleEntity;
 import org.yingzuidou.cms.cmsweb.service.PermissionService;
 import org.yingzuidou.cms.cmsweb.core.utils.CmsBeanUtils;
 

@@ -28,7 +28,7 @@ public class CmsCommonUtil {
      */
     public static CmsUserEntity getCurrentLoginUser() {
         Subject subject = SecurityUtils.getSubject();
-        CmsUserEntity user = (CmsUserEntity) subject.getPrincipals().getPrimaryPrincipal();
+        CmsUserEntity user = (CmsUserEntity) subject.getPrincipal();
         return user;
     }
 
