@@ -46,4 +46,14 @@ public class LoginServiceImpl implements LoginService {
         currentUser.setLockTime(new Date());
         userRepository.save(currentUser);
     }
+
+    /**
+     * 更新用户如登录时间等信息
+     *
+     * @param user 用户对象
+     */
+    @Override
+    public void saveUser(CmsUserEntity user) {
+        userRepository.save(user);
+    }
 }

@@ -4,6 +4,8 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
+import java.util.List;
+
 /**
  * UserRepository
  *
@@ -17,5 +19,9 @@ public interface UserRepository extends PagingAndSortingRepository<CmsUserEntity
     CmsUserEntity findByUserAccountAndIdNotAndIsDelete(String userAccount, Integer id, String isDelete);
 
     CmsUserEntity findByIdAndIsDelete(Integer id, String isDelete);
+
+    List<CmsUserEntity> findAllByIdInAndIsDelete(List<Integer> userIds, String isDelete);
+    
+    
 
 }

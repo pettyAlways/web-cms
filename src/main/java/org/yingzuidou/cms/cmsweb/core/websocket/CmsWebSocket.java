@@ -107,4 +107,15 @@ public class CmsWebSocket {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 给指定用户发送消息
+     *
+     * @param userId 用户Id
+     */
+    public static void sendSpecifyUserMsg(Integer userId, Map<String, Object> msg) {
+        Optional.of(CmsWebSocket.connectSessions.entrySet()).orElse(new HashSet<>())
+                .stream().filter(item -> item.getKey().equals(userId))
+                .forEach(item -> CmsWebSocket.sendMessage(msg, item.getValue()));
+    }
 }

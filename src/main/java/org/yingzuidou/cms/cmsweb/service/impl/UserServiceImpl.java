@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 更新一个新的用户，密码使用md5加盐值为uuid进行加密
+     * 更新前需要对比密码是否一致，如果一致则跳过加密
      * 每次更新uuid都在变因此得到的密文也在变
      *
      * @param userEntity 用户实体类
@@ -92,12 +93,16 @@ public class UserServiceImpl implements UserService {
         }
         Optional<CmsUserEntity> optionEntity = userBiz.findById(userEntity.getId());
         CmsUserEntity entity = optionEntity.get();
+        // 如果密码发生改变就需要加密
+        if (!entity.getUserPassword().equals(userEntity.getUserPassword())) {
+            String uuid = UUID.randomUUID().toString().replaceAll("-","");
+            String encryptPwd = CmsCommonUtil.getMd5PasswordText(uuid, userEntity.getUserPassword());
+            userEntity.setUserPassword(encryptPwd);
+            userEntity.setUuid(uuid);
+        }
         CmsBeanUtils.copyMorNULLProperties(userEntity, entity);
         entity.setUpdator(CmsCommonUtil.getCurrentLoginUserId());
         entity.setUpdateTime(new Date());
-        String uuid = UUID.randomUUID().toString().replaceAll("-","");
-        entity.setUuid(uuid);
-        entity.setUserPassword(CmsCommonUtil.getMd5PasswordText(uuid, userEntity.getUserPassword()));
         userRepository.save(entity);
     }
 

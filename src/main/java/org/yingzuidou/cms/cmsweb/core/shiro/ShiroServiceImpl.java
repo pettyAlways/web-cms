@@ -19,6 +19,7 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
 import javax.swing.text.html.Option;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * ShiroServiceImpl
@@ -44,6 +45,11 @@ public class ShiroServiceImpl implements ShiroService {
 
     private static final String PREMISSION_STRING = "roles[\"%s\"]";
 
+    /**
+     * 给资源路径授权
+     *
+     * @return 资源映射
+     */
     @Override
     public Map<String, String> loadFilterChainDefinitions() {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
@@ -63,6 +69,11 @@ public class ShiroServiceImpl implements ShiroService {
         return filterChainDefinitionMap;
     }
 
+    /**
+     *  在动态更新资源的权限的时候,重新为资源授权
+     *
+     * @param shiroFilterFactoryBean Shiro过滤器工厂类
+     */
     @Override
     public void updatePermission(ShiroFilterFactoryBean shiroFilterFactoryBean) {
         synchronized (this) {
@@ -115,7 +126,7 @@ public class ShiroServiceImpl implements ShiroService {
                     // 防止误杀当前已经登录的session
                     if (!session.getId().equals(subject.getSession().getId())) {
                         Map<String, Object> msg = new HashMap<>(2);
-                        msg.put("type", WebSocketTypeEnum.KICKOUT.getValue());
+                        msg.put("type", WebSocketTypeEnum.TIP.getValue());
                         msg.put("msg", "账号在其他地方登陆");
                         Optional.of(CmsWebSocket.connectSessions.entrySet()).orElse(new HashSet<>())
                                 .stream().filter(item -> item.getKey().equals(user.getId()))
@@ -125,5 +136,54 @@ public class ShiroServiceImpl implements ShiroService {
                 }
             }
         });
+    }
+
+    @Override
+    public List<Integer> currentOnlineUser() {
+        // 获取当前已登录的用户session列表
+       Map<Integer, Session> sessions = mapSessionUsingUser();
+       return new ArrayList<>(sessions.keySet());
+    }
+
+    /**
+     * 在线用户Id与Session的映射
+     *
+     * @return 映射Map
+     */
+    @Override
+    public Map<Integer, Session> mapSessionUsingUser() {
+        Map<Integer, Session> mapSession = new HashMap<>();
+        // 获取当前已登录的用户session列表
+        DefaultWebSecurityManager securityManager = (DefaultWebSecurityManager) SecurityUtils.getSecurityManager();
+        DefaultWebSessionManager sessionManager = (DefaultWebSessionManager)securityManager.getSessionManager();
+        Collection<Session> sessions = sessionManager.getSessionDAO().getActiveSessions();
+        Optional.ofNullable(sessions).orElse(new ArrayList<>()).parallelStream()
+                .filter(session -> new Subject.Builder().session(session).buildSubject().isAuthenticated())
+                .forEach(session -> {
+                    Subject sessionSubject = new Subject.Builder().session(session).buildSubject();
+                    CmsUserEntity user = (CmsUserEntity) sessionSubject.getPrincipal();
+                    mapSession.put(user.getId(), session);
+                });
+        return mapSession;
+    }
+
+    /**
+     * 根据指定的用户Id去清除Session会话
+     *
+     * @param userId 用户Id
+     */
+    @Override
+    public void killSpecifySession(Integer userId, String msg) {
+        Map<Integer, Session> sessionMap =  mapSessionUsingUser();
+        if (Objects.nonNull(sessionMap)) {
+            Session session = sessionMap.get(userId);
+            // 先提示用户消息
+            Map<String, Object> msgMap = new HashMap<>(2);
+            msgMap.put("type", WebSocketTypeEnum.TIP.getValue());
+            msgMap.put("msg", msg);
+            CmsWebSocket.sendSpecifyUserMsg(userId, msgMap);
+            // 清除会话
+            session.stop();
+        }
     }
 }

@@ -85,4 +85,8 @@ public class UserBiz {
         }
         return roleNames;
     }
+
+    public List<CmsUserEntity> findUsersByIds(List<Integer> userIds) {
+        return userRepository.findAllByIdInAndIsDelete(userIds, "N");
+    }
 }

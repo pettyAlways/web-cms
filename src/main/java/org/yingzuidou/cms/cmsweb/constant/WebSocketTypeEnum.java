@@ -16,7 +16,7 @@ public enum WebSocketTypeEnum {
     HEART("心跳", "heart"),
 
     // 账户被锁定
-    KICKOUT("踢出", "kickout");
+    TIP("消息提示", "tip");
 
     /**
      * 用户状态

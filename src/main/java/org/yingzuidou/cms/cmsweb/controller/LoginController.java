@@ -23,10 +23,7 @@ import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 import org.yingzuidou.cms.cmsweb.service.LoginService;
 import org.yingzuidou.cms.cmsweb.service.UserService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 登录控制类
@@ -69,7 +66,10 @@ public class LoginController {
                 throw new BusinessException(authException.getMessage());
             }
         }
-        // 在登录的时候加载资源
+        // 更新上一次登录时间
+        CmsUserEntity user = (CmsUserEntity) subject.getPrincipal();
+        user.setLoginTime(new Date());
+        loginService.saveUser(user);
         return CmsMap.ok()
                 .appendData("token", subject.getSession().getId());
     }
