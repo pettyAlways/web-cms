@@ -1,6 +1,11 @@
 package org.yingzuidou.cms.cmsweb.entity;
 
+import org.hibernate.validator.constraints.Length;
+import org.yingzuidou.cms.cmsweb.core.validate.TelNum;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
@@ -15,12 +20,18 @@ import java.util.Objects;
 @Table(name = "cms_user", schema = "my-cms", catalog = "")
 public class CmsUserEntity {
     private int id;
+
+    @Length(max = 30, message = "用户名不能超过30个字符")
     private String userName;
     private String userSex;
+    @Length(max = 30, message = "账号不能超过30个字符")
     private String userAccount;
+    @Length(max = 255, message = "密码长度不能超过255个字符")
     private String userPassword;
     private String userStatus;
+    @TelNum
     private String userTel;
+    @Email
     private String userMail;
     private Integer userDepart;
     private int creator;

@@ -1,5 +1,7 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -36,6 +38,7 @@ public class OnlineDTO {
     /**
      * 上次登录时间
      */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date loginTime;
 
     /**

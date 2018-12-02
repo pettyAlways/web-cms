@@ -4,6 +4,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -152,7 +153,7 @@ public class ShiroServiceImpl implements ShiroService {
      */
     @Override
     public Map<Integer, Session> mapSessionUsingUser() {
-        Map<Integer, Session> mapSession = new HashMap<>();
+        Map<Integer, Session> mapSession = new HashMap<>(10);
         // 获取当前已登录的用户session列表
         DefaultWebSecurityManager securityManager = (DefaultWebSecurityManager) SecurityUtils.getSecurityManager();
         DefaultWebSessionManager sessionManager = (DefaultWebSessionManager)securityManager.getSessionManager();
@@ -182,8 +183,9 @@ public class ShiroServiceImpl implements ShiroService {
             msgMap.put("type", WebSocketTypeEnum.TIP.getValue());
             msgMap.put("msg", msg);
             CmsWebSocket.sendSpecifyUserMsg(userId, msgMap);
-            // 清除会话
-            session.stop();
+            // 清除会话,session.stop清除资源不够彻底还能被getAtiveSessions拿到停止的session
+            Subject subject = new Subject.Builder().session(session).buildSubject();
+            subject.logout();
         }
     }
 }

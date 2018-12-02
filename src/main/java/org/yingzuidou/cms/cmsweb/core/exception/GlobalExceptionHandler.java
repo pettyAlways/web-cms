@@ -3,12 +3,15 @@ package org.yingzuidou.cms.cmsweb.core.exception;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.yingzuidou.cms.cmsweb.core.CmsMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author 鹰嘴豆
@@ -21,7 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public CmsMap handleGlobalException(HttpServletRequest req, Exception e) throws JsonProcessingException {
+    public CmsMap handleGlobalException(HttpServletRequest req, Exception e) {
         CmsMap cMap = null;
         if (e instanceof BusinessException) {
             cMap = CmsMap.error(((BusinessException) e).getCode(), e.getMessage());

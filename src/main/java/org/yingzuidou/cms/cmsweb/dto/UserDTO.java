@@ -1,5 +1,6 @@
 package org.yingzuidou.cms.cmsweb.dto;
 
+import org.hibernate.validator.constraints.Length;
 import org.yingzuidou.cms.cmsweb.core.vo.Node;
 import org.yingzuidou.cms.cmsweb.entity.CmsUserEntity;
 
