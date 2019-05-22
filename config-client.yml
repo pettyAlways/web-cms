@@ -12,7 +12,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8083/eureka/
+      defaultZone: http://admin:admin@eureka:8083/eureka/
     register-with-eureka: true
 
 ---
@@ -25,5 +25,5 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8083/eureka/
+      defaultZone: http://admin:admin@eureka:8083/eureka/
     register-with-eureka: true
