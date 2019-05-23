@@ -15,7 +15,7 @@ eureka:
       defaultZone: http://eureka:8083/eureka/
     register-with-eureka: false
 info:
-  app.name: 'ConfigBusClientDev--Update'
+  app.name: 'ConfigBusClientDev--Update-agagin'
 ---
 server:
   port: 8011
