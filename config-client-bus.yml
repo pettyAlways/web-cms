@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active:
+    - dev
+---
+server:
+  port: 8010
+spring:
+  profiles: dev
+  application:
+    name: microservicecloud-config-bus-dev
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8083/eureka/
+    register-with-eureka: false
+info:
+  app.name: 'ConfigBusClientDev'
+---
+server:
+  port: 8011
+spring:
+  profiles: test
+  application:
+    name: microservicecloud-config-bus-test
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8083/eureka/
+    register-with-eureka: false
+info:
+  app.name: 'ConfigBusClientTest'
