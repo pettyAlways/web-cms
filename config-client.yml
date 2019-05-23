@@ -8,12 +8,12 @@ server:
 spring:
   profiles: dev
   application:
-    name: microservicecloud-dev
+    name: config-client
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8083/eureka/
-    register-with-eureka: false
+      defaultZone: http://admin:admin@eureka:8083/eureka/
+    register-with-eureka: true
 
 ---
 server:
@@ -25,5 +25,5 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8083/eureka/
-    register-with-eureka: false
+      defaultZone: http://admin:admin@eureka:8083/eureka/
+    register-with-eureka: true
