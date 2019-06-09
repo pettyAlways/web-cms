@@ -1,5 +1,5 @@
 
-use `my_cms`;
+use `cms_web`;
 
 
 -- ----------------------------
@@ -10,7 +10,7 @@ delimiter ;;
 CREATE PROCEDURE `INIT_CMS_TABLE`()
 BEGIN
 
-	DECLARE curDate datetime; 
+	DECLARE curDate datetime;
 	SET curDate = NOW();
 
 	SET NAMES utf8mb4;
@@ -30,7 +30,7 @@ BEGIN
 		`update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
- 
+
   -- 用户表
 	DROP TABLE IF EXISTS `cms_user`;
 	CREATE TABLE `cms_user`  (
@@ -53,7 +53,7 @@ BEGIN
 		`login_time` datetime(0) NULL DEFAULT NULL COMMENT '登录时间',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-	
+
 	-- 部门表
 	DROP TABLE IF EXISTS `organization`;
 	CREATE TABLE `organization`  (
@@ -68,7 +68,7 @@ BEGIN
 		`is_delete` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-	
+
 	-- 资源表
 	DROP TABLE IF EXISTS `resource`;
 	CREATE TABLE `resource`  (
@@ -89,7 +89,7 @@ BEGIN
 		`default_page` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '默认页面(是：Y， 否：N)',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-	
+
 	-- 角色表
 	DROP TABLE IF EXISTS `role`;
 	CREATE TABLE `role`  (
@@ -104,7 +104,7 @@ BEGIN
 		`is_delete` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-	
+
 	-- 角色资源表
 	DROP TABLE IF EXISTS `role_resource`;
 	CREATE TABLE `role_resource`  (
@@ -117,7 +117,7 @@ BEGIN
 		`update_time` datetime(0) NULL DEFAULT NULL,
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-	
+
 	-- 用户角色表
 	DROP TABLE IF EXISTS `user_role`;
 	CREATE TABLE `user_role`  (
@@ -128,25 +128,33 @@ BEGIN
 		`create_time` datetime(0) NULL DEFAULT NULL,
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
- 
+
+ -- 重置表的数据
+	truncate table cms_user;
+	truncate table cms_const;
+	truncate table organization;
+	truncate table resource;
+	truncate table role;
+	truncate table role_resource;
+	truncate table user_role;
+
  -- 生成一个根级部门，用于显示超级管理员账号
  INSERT INTO `organization` VALUES (1, 0, '鹰嘴豆总部', 'Y', 1, NOW(), NULL, NULL, 'N');
 
- 
  -- 生成超级管理员
- INSERT INTO `cms_user` VALUES (1, '超级管理员', '0', 'admin', '5684995729a64824ce148c0fd50c1037', '1', '', '', 1, 0, NOW(), 3, NULL, 'N', '9ddac78c1ddf4301a3bc31d721ebc5a7');
- 
+ INSERT INTO `cms_user` VALUES (1, '超级管理员', '0', 'admin', '5684995729a64824ce148c0fd50c1037', '1', '', '', 1, 0, NOW(), 3, NULL, 'N', '9ddac78c1ddf4301a3bc31d721ebc5a7', null, null);
+
  -- 生成角色
  INSERT INTO `role` VALUES (1, '超级管理员', '1', '我是超级管理员哟~', 1, NOW(), 1, NULL, 'N');
 
  -- 超级管理员与角色关联数据
  INSERT INTO `user_role` VALUES (1, 1, 1, 1, NOW());
- 
+
  -- 插入资源表
- INSERT INTO `resource` VALUES (1, '系统管理', -1, 'module', '1', '', 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', 'SysConfigure', 'N');
+INSERT INTO `resource` VALUES (1, '系统管理', -1, 'module', '1', '', 'sys-manage', 1, 0, NOW(), 1, NULL, 'N', 'SysConfigure', 'N');
 INSERT INTO `resource` VALUES (2, '系统配置', 1, 'menu', '1', '', 'organization', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (3, '资源管理', 2, 'page', '1', '/sys-config/resource-manage', 'language', 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
-INSERT INTO `resource` VALUES (4, '组织管理', 2, 'page', '2', '/sys-config/organization-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (4, '组织管理', 2, 'page', '1', '/sys-config/organization-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (5, '角色管理', 2, 'page', '1', '/sys-config/role-manage', 'table-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (6, '用户管理', 2, 'page', '1', '/sys-config/user-manage', 'function-manage', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (7, '资源新增', 3, 'button', '1', '/permission/savePower.do', NULL, 1, 0, NOW(), 1, NULL, 'N', NULL, 'N');
@@ -175,6 +183,10 @@ INSERT INTO `resource` VALUES (29, '用户更新', 6, 'button', '1', '/user/edit
 INSERT INTO `resource` VALUES (30, '用户赋角', 6, 'button', '1', '/user/authUser.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (31, '用户删除', 6, 'button', '1', '/user/authUser.do', '', 1, 0, NOW(), 8, NULL, 'N', NULL, 'N');
 INSERT INTO `resource` VALUES (32, '用户查询', 6, 'button', '1', '/user/list.do', '', 1, 8, NOW(), NULL, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (33, '用户在线', 2, 'page', '1', '/sys-config/online-manage', '部门／员工管理', 6, 1, NOW(), NULL, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (34, '用户查询', 33, 'button', '1', '/online/list.do', '', 3, 0, NOW(), 1, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (35, '用户踢出', 33, 'button', '1', '/online/kickout.do', '', 1, 1, NOW(), NULL, NULL, 'N', NULL, 'N');
+INSERT INTO `resource` VALUES (36, '用户禁用', 33, 'page', '1', '/online/invalidUser.do', '', 2, 0, NOW(), 1, NULL, 'N', NULL, 'N');
 
  -- 超级管理员角色与资源关联
   INSERT INTO `role_resource` VALUES (1, 1, 1, 1, NOW(), NULL, NULL);
@@ -183,6 +195,11 @@ INSERT INTO `resource` VALUES (32, '用户查询', 6, 'button', '1', '/user/list
   INSERT INTO `role_resource` VALUES (6, 1, 9, 1, NOW(), NULL, NULL);
   INSERT INTO `role_resource` VALUES (5, 1, 26, 1, NOW(), NULL, NULL);
   INSERT INTO `role_resource` VALUES (4, 1, 27, 1, NOW(), NULL, NULL);
+
+ -- 基本常量数据
+  INSERT INTO `cms_const` VALUES (1, '1', '资源根名称', 'root_resource', '开发者平台', '1', 1, NOW(), NULL, NULL);
+	INSERT INTO `cms_const` VALUES (2, '1', '网站标题', 'system_title', '开发者平台', '1', 1, NOW(), NULL, NULL);
+	INSERT INTO `cms_const` VALUES (3, '1', '鉴权方式', 'no_auth_represent', 'represent', '1', 0, NOW(), 1, NULL);
 
 END
 ;;
