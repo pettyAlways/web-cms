@@ -49,6 +49,8 @@ BEGIN
 		`update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
 		`is_delete` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否删除',
 		`uuid` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '提供一个uuid做加密的盐值',
+		`lock_time` datetime(0) NULL DEFAULT NULL COMMENT '锁住时间',
+		`login_time` datetime(0) NULL DEFAULT NULL COMMENT '登录时间',
 		PRIMARY KEY (`id`) USING BTREE
 	) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 	
