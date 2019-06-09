@@ -176,7 +176,7 @@ public class PermissionServiceImpl implements PermissionService {
         Optional<List<RoleResourceEntity>> roleResourceEntities = roleResourceRepository.findAllByResourceId(id);
         List<Integer> roleIds = roleResourceEntities.orElse(new ArrayList<>()).stream()
                 .map(RoleResourceEntity::getRoleId).collect(Collectors.toList());
-        if (Objects.nonNull(roleIds)) {
+        if (!roleIds.isEmpty()) {
             List<Object> userIds = userRoleRepository.findAllByRoleIdAndRoleInUse(roleIds);
             // 转换去重
             List<Integer> iUserIds = Optional.ofNullable(userIds).orElse(new ArrayList<>()).stream()

@@ -77,7 +77,7 @@ public class PermissionController {
         permissionService.updateResouce(entity);
         // 更改资源需要清空对应用户的缓存
         List<Integer> userIds = permissionService.findUserIdsByResource(entity.getId());
-        if (Objects.nonNull(userIds)) {
+        if (!userIds.isEmpty()) {
             userIds.forEach(userId -> cmsCacheManager
                     .clearCacheByKeys("resourceCache", "resourceTree_" + userId));
         }
