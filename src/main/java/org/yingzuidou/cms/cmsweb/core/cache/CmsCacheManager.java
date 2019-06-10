@@ -27,22 +27,6 @@ public class CmsCacheManager {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
-    private ConstService constService;
-
-    /**
-     *  查询缓存中的系统常量，如果没在缓存没命中则从数据库查询
-     *
-     * @return 系统常量列表
-     */
-    public  Map<String, String> systemConst() {
-        Map<String, String> systemParams = new HashMap<>(100);
-        List<CmsConstEntity> constEntities = constService.findAllConstByType("1");
-        Optional.ofNullable(constEntities).orElse(new ArrayList <>())
-                .forEach(item -> systemParams.put(item.getConstKey(), item.getConstValue()));
-        return systemParams;
-    }
-
     /**
      * 清除指定缓存中的键内容
      *

@@ -14,6 +14,7 @@ import org.yingzuidou.cms.cmsweb.dao.RoleResourceRepository;
 import org.yingzuidou.cms.cmsweb.dto.PermissionDTO;
 import org.yingzuidou.cms.cmsweb.entity.QResourceEntity;
 import org.yingzuidou.cms.cmsweb.entity.ResourceEntity;
+import org.yingzuidou.cms.cmsweb.service.ConstService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class ResourceBiz {
      * 缓存管理类
      */
     @Autowired
-    private CmsCacheManager cmsCacheManager;
+    private ConstService constService;
 
     public Page<ResourceEntity> findAllResourceWithCondition(PermissionDTO permissionDTO, Pageable pageable) {
         BooleanExpression expression = qResourceEntity.isDelete.eq("N").and(qResourceEntity.parentId
@@ -63,7 +64,7 @@ public class ResourceBiz {
     public Node acquirePermissions(List<ResourceEntity> flatNode, Boolean skipNonUse) {
         Node root = new Node();
         // 从系统常量中获取标题
-        Map<String, String> systemParams = cmsCacheManager.systemConst();
+        Map<String, String> systemParams = constService.systemConst();
         String rootResource = systemParams.get("root_resource");
         if (Objects.isNull(rootResource)) {
             rootResource = "Cms资源平台";
