@@ -60,6 +60,11 @@ public class PermissionServiceImpl implements PermissionService {
     public PermissionDTO listPower() {
         List<ResourceEntity> flatNode = permissionRepository.findAllByIsDeleteIs("N");
         Node root = resouceBiz.acquirePermissions(flatNode, false);
+        // 设置外部资源模块的类型在前台通过不同图标使用
+        Optional.ofNullable(root.getChildren()).orElse(new ArrayList<>()).stream()
+                .filter(item -> Objects.equals(item.getBelongs(), "external"))
+                .forEach(item -> item.setType("exModule"));
+
         PermissionDTO permissionDTO = new PermissionDTO();
         permissionDTO.setTree(root);
         return permissionDTO;
@@ -167,7 +172,12 @@ public class PermissionServiceImpl implements PermissionService {
                 }
             }
         }
-        return resouceBiz.acquirePermissions(resourceEntities, true);
+        // 过滤提供其他平台使用的外部资源
+        Node root = resouceBiz.acquirePermissions(resourceEntities, true);
+        List<Node> filterNodes = Optional.ofNullable(root.getChildren()).orElse(new ArrayList<>()).stream()
+                .filter(node -> Objects.equals(node.getBelongs(), "internal")).collect(Collectors.toList());
+        root.setChildren(filterNodes);
+        return root;
     }
 
     @Override

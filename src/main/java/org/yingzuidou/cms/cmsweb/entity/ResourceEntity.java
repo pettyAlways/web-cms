@@ -31,6 +31,7 @@ public class ResourceEntity {
     private String isDelete;
     private String alias;
     private String defaultPage;
+    private String belongs;
 
     @Id
     @Column(name = "id")
@@ -171,6 +172,16 @@ public class ResourceEntity {
 
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    @Basic
+    @Column(name = "belongs")
+    public String getBelongs() {
+        return belongs;
+    }
+
+    public void setBelongs(String belongs) {
+        this.belongs = belongs;
     }
 
     @Override

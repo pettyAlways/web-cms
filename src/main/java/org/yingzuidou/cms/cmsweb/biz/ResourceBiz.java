@@ -101,6 +101,7 @@ public class ResourceBiz {
                     child.setSort(node.getResourceSort());
                     child.setPath(node.getResourcePath());
                     child.setAlias(node.getAlias());
+                    child.setBelongs(node.getBelongs());
                     child.setDefaultPage(node.getDefaultPage());
                     return child;
                 })

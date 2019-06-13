@@ -44,6 +44,8 @@ public class Node {
 
     private String defaultPage;
 
+    private String belongs;
+
     /**
      * 资源子集
      */
@@ -119,6 +121,14 @@ public class Node {
 
     public void setDefaultPage(String defaultPage) {
         this.defaultPage = defaultPage;
+    }
+
+    public String getBelongs() {
+        return belongs;
+    }
+
+    public void setBelongs(String belongs) {
+        this.belongs = belongs;
     }
 
     @Override
